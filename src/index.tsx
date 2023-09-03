@@ -7,7 +7,8 @@ import { eq } from "drizzle-orm";
 
 const app = new Elysia()
   .use(html())
-  .get("/", ({ html }) =>
+  // TODO: Fix elysia html typings
+  .get("/", ({ html }: any) =>
     html(
       <BaseHtml>
         <body
@@ -23,11 +24,29 @@ const app = new Elysia()
     const data = await db.select().from(puppies).all();
     return <PuppyList puppies={data} />;
   })
+  .get(
+    "/puppies/:id",
+    async ({ params }) => {
+      const data = await db
+        .select()
+        .from(puppies)
+        .where(eq(puppies.id, params.id))
+        .get();
+      if (data) {
+        return <PuppyItem {...data} />;
+      }
+    },
+    {
+      params: t.Object({
+        id: t.Numeric(),
+      }),
+    }
+  )
   .post(
     "/puppies",
     async ({ body }) => {
-      const newTodo = await db.insert(puppies).values(body).returning().get();
-      return <PuppyItem {...newTodo} />;
+      const newPuppy = await db.insert(puppies).values(body).returning().get();
+      return <PuppyItem {...newPuppy} />;
     },
     {
       body: t.Object({
