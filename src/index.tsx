@@ -26,13 +26,14 @@ const app = new Elysia()
   })
   .get(
     "/puppies/:id",
-    async ({ params }) => {
+    async ({ params, set }) => {
       const data = await db
         .select()
         .from(puppies)
         .where(eq(puppies.id, params.id))
         .get();
       if (data) {
+        set.headers["HX-Push-Url"] = `/puppies/${params.id}`;
         return <PuppyItem {...data} />;
       }
     },
@@ -44,7 +45,7 @@ const app = new Elysia()
   )
   .post(
     "/puppies",
-    async ({ body }) => {
+    async ({ body, set }) => {
       const newPuppy = await db.insert(puppies).values(body).returning().get();
       return <PuppyItem {...newPuppy} />;
     },
@@ -81,14 +82,17 @@ function PuppyItem({ title, id }: Puppy) {
   return (
     <div class="flex flex-row space-x-3">
       <p>{title}</p>
-      <button
+      <button hx-get={`/puppies/${id}`} hx-swap="innerHTML" hx-target="body">
+        To details
+      </button>
+      {/* <button
         class="text-red-500"
         hx-delete={`/puppy/${id}`}
         hx-swap="outerHTML"
         hx-target="closest div"
       >
         To details
-      </button>
+      </button> */}
     </div>
   );
 }
@@ -108,11 +112,11 @@ function NewPuppyForm() {
   return (
     <form
       class="flex flex-row space-x-3"
-      hx-post="/puppy"
+      hx-post="/puppies"
       hx-swap="beforebegin"
       _="on submit target.reset()"
     >
-      <input type="text" name="content" class="border border-black" />
+      <input type="text" name="title" class="border border-black" />
       <button type="submit">Create</button>
     </form>
   );
