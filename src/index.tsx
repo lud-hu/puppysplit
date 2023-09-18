@@ -8,21 +8,13 @@ import { eq } from "drizzle-orm";
 const app = new Elysia()
   .use(html())
   // TODO: Fix elysia html typings
-  .get("/", ({ html }: any) =>
-    html(
-      <BaseHtml>
-        <body
-          class="flex w-full h-screen justify-center items-center"
-          hx-get="/puppies"
-          hx-swap="innerHTML"
-          hx-trigger="load"
-        />
-      </BaseHtml>
-    )
-  )
-  .get("/puppies", async () => {
+  .get("/", async ({ html }: any) => {
     const data = await db.select().from(puppies).all();
-    return <PuppyList puppies={data} />;
+    return html(
+      <BaseHtml>
+        <PuppyList puppies={data} />
+      </BaseHtml>
+    );
   })
   .get(
     "/puppies/:id",
@@ -33,8 +25,12 @@ const app = new Elysia()
         .where(eq(puppies.id, params.id))
         .get();
       if (data) {
-        set.headers["HX-Push-Url"] = `/puppies/${params.id}`;
-        return <PuppyItem {...data} />;
+        // set.headers["HX-Push-Url"] = `/puppies/${params.id}`;
+        return (
+          <BaseHtml>
+            <PuppyDetails {...data} />
+          </BaseHtml>
+        );
       }
     },
     {
@@ -82,17 +78,16 @@ function PuppyItem({ title, id }: Puppy) {
   return (
     <div class="flex flex-row space-x-3">
       <p>{title}</p>
-      <button hx-get={`/puppies/${id}`} hx-swap="innerHTML" hx-target="body">
-        To details
-      </button>
-      {/* <button
-        class="text-red-500"
-        hx-delete={`/puppy/${id}`}
-        hx-swap="outerHTML"
-        hx-target="closest div"
-      >
-        To details
-      </button> */}
+      <a href={`/puppies/${id}`}>To details</a>
+    </div>
+  );
+}
+
+function PuppyDetails({ title }: Puppy) {
+  return (
+    <div class="flex flex-row space-x-3">
+      <a href={`/`}>Back</a>
+      <p>{title}</p>
     </div>
   );
 }
