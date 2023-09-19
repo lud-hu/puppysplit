@@ -24,6 +24,7 @@ export const debts = sqliteTable("debts", {
   title: text("title").notNull(),
   amount: real("amount").notNull(),
   debtorId: integer("debtorId", { mode: "number" }).notNull(),
+  puppyId: integer("puppyId", { mode: "number" }).notNull(),
 });
 
 export const debtsRelations = relations(debts, ({ many, one }) => ({
@@ -33,7 +34,7 @@ export const debtsRelations = relations(debts, ({ many, one }) => ({
     references: [users.id],
   }),
   puppies: one(puppies, {
-    fields: [debts.debtorId],
+    fields: [debts.puppyId],
     references: [puppies.id],
   }),
 }));

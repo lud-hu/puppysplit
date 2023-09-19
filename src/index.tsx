@@ -1,9 +1,14 @@
-import { Elysia, t } from "elysia";
 import { html } from "@elysiajs/html";
+import { Elysia, t } from "elysia";
 import * as elements from "typed-html";
+import DebtListEntry from "./components/DebtListEntry";
+import PuppyDetails from "./components/PuppyDetails";
+import PuppyItem from "./components/PuppyItem";
+import PuppyList from "./components/PuppyList";
 import { db } from "./db";
-import { Puppy, creditorsToDebts, debts, puppies, users } from "./db/schema";
-import { eq } from "drizzle-orm";
+import { creditorsToDebts, debts, puppies, users } from "./db/schema";
+import { settleDebts, unifyDebts } from "./util/settleDebts";
+import BaseHtml from "./components/BaseHtml";
 
 const app = new Elysia()
   .use(html())
@@ -19,16 +24,51 @@ const app = new Elysia()
   .get(
     "/puppies/:id",
     async ({ params, set }) => {
-      const data = await db
-        .select()
-        .from(puppies)
-        .where(eq(puppies.id, params.id))
-        .get();
+      const data = await db.query.puppies.findFirst({
+        where: (puppies, { eq }) => eq(puppies.id, params.id),
+        with: {
+          debts: {
+            with: {
+              debtor: true,
+              // puppies: true,
+              creditorsToDebts: {
+                with: {
+                  user: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!data) {
+        return <div>Not found</div>;
+      }
+
+      const debts =
+        data?.debts.map((debt) => ({
+          ...debt,
+          creditorsToDebts: undefined,
+          debtorId: undefined,
+          debtor: debt.debtor.name,
+          creditors: debt.creditorsToDebts.map((c) => c.user.name),
+        })) || [];
+
+      const users = await db.query.users.findMany({
+        where: (users, { eq }) => eq(users.puppyId, params.id),
+      });
+
       if (data) {
         // set.headers["HX-Push-Url"] = `/puppies/${params.id}`;
         return (
           <BaseHtml>
-            <PuppyDetails {...data} />
+            <PuppyDetails
+              debts={debts}
+              id={data.id}
+              title={data.title}
+              settleDebts={settleDebts(unifyDebts(debts))}
+              users={users}
+            />
           </BaseHtml>
         );
       }
@@ -74,58 +114,53 @@ const app = new Elysia()
   // Add a debt to a puppy
   .post(
     "/puppies/:id/debts",
-    async ({ body, set }) => {
+    async ({ body, params }) => {
       const newDebt = await db
         .insert(debts)
         .values({
-          amount: body.amount,
-          debtorId: body.debtorId,
+          amount: parseInt(body.amount),
+          debtorId: parseInt(body.debtorId),
+          puppyId: params.id,
           title: body.title,
         })
         .returning()
         .get();
-      const newCreditorsToDebts = await db.insert(creditorsToDebts).values(
+
+      await db.insert(creditorsToDebts).values(
         body.creditorIds.map((c) => ({
           debtId: newDebt.id,
-          userId: c,
+          userId: parseInt(c),
         }))
       );
-      return <div>jo</div>;
+
+      const users = await db.query.users.findMany({
+        where: (users, { eq }) => eq(users.puppyId, params.id),
+      });
+
+      return (
+        <DebtListEntry
+          debt={{
+            debtor: users.find((u) => u.id === newDebt.debtorId)?.name || "",
+            creditors: users
+              .filter((u) => body.creditorIds.includes(u.id.toString()))
+              .map((u) => u.name),
+            amount: newDebt.amount,
+            title: newDebt.title,
+            creditorsToDebts: undefined,
+            debtorId: undefined,
+            id: newDebt.id,
+          }}
+        />
+      );
     },
     {
       body: t.Object({
         title: t.String({ minLength: 2 }),
-        amount: t.Number(),
-        debtorId: t.Number(),
-        creditorIds: t.Array(t.Number(), { minLength: 1 }),
+        // TODO: How to accept number here directly?
+        amount: t.String(),
+        debtorId: t.String(),
+        creditorIds: t.Array(t.String(), { minLength: 1 }),
       }),
-    }
-  )
-  // Get all debts of a puppy (in JSON for now)
-  .get(
-    "/puppies/:id/debts",
-    async ({ body, set }) => {
-      const debtList = await db.query.debts.findMany({
-        with: {
-          debtor: true,
-          // puppies: true,
-          creditorsToDebts: {
-            with: {
-              user: true,
-            },
-          },
-        },
-      });
-
-      return debtList.map((debt) => ({
-        ...debt,
-        creditorsToDebts: undefined,
-        debtorId: undefined,
-        debtor: debt.debtor.name,
-        creditors: debt.creditorsToDebts.map((c) => c.user.name),
-      }));
-    },
-    {
       params: t.Object({
         id: t.Numeric(),
       }),
@@ -137,62 +172,3 @@ const app = new Elysia()
 console.log(
   `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
 );
-
-const BaseHtml = ({ children }: elements.Children) => `
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THE BETH STACK</title>
-  <script src="https://unpkg.com/htmx.org@1.9.3"></script>
-  <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
-  <link href="/styles.css" rel="stylesheet">
-</head>
-
-${children}
-`;
-
-function PuppyItem({ title, id }: Puppy) {
-  return (
-    <div class="flex flex-row space-x-3">
-      <p>{title}</p>
-      <a href={`/puppies/${id}`}>To details</a>
-    </div>
-  );
-}
-
-function PuppyDetails({ title }: Puppy) {
-  return (
-    <div class="flex flex-row space-x-3">
-      <a href={`/`}>Back</a>
-      <p>{title}</p>
-    </div>
-  );
-}
-
-function PuppyList({ puppies }: { puppies: Puppy[] }) {
-  return (
-    <div>
-      {puppies.map((puppy) => (
-        <PuppyItem {...puppy} />
-      ))}
-      <NewPuppyForm />
-    </div>
-  );
-}
-
-function NewPuppyForm() {
-  return (
-    <form
-      class="flex flex-row space-x-3"
-      hx-post="/puppies"
-      hx-swap="beforebegin"
-      _="on submit target.reset()"
-    >
-      <input type="text" name="title" class="border border-black" />
-      <button type="submit">Create</button>
-    </form>
-  );
-}
