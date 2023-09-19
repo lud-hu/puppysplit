@@ -2,7 +2,7 @@ import { Elysia, t } from "elysia";
 import { html } from "@elysiajs/html";
 import * as elements from "typed-html";
 import { db } from "./db";
-import { Puppy, puppies } from "./db/schema";
+import { Puppy, creditorsToDebts, debts, puppies, users } from "./db/schema";
 import { eq } from "drizzle-orm";
 
 const app = new Elysia()
@@ -48,6 +48,86 @@ const app = new Elysia()
     {
       body: t.Object({
         title: t.String({ minLength: 1 }),
+      }),
+    }
+  )
+  // Add a list of users to a puppy
+  .post(
+    "/puppies/:id/users",
+    async ({ body, set, params }) => {
+      const newPuppy = await db
+        .insert(users)
+        .values(body.names.map((e) => ({ name: e, puppyId: params.id })))
+        .returning()
+        .get();
+      return <div>jo</div>;
+    },
+    {
+      body: t.Object({
+        names: t.Array(t.String({ minLength: 2 })),
+      }),
+      params: t.Object({
+        id: t.Numeric(),
+      }),
+    }
+  )
+  // Add a debt to a puppy
+  .post(
+    "/puppies/:id/debts",
+    async ({ body, set }) => {
+      const newDebt = await db
+        .insert(debts)
+        .values({
+          amount: body.amount,
+          debtorId: body.debtorId,
+          title: body.title,
+        })
+        .returning()
+        .get();
+      const newCreditorsToDebts = await db.insert(creditorsToDebts).values(
+        body.creditorIds.map((c) => ({
+          debtId: newDebt.id,
+          userId: c,
+        }))
+      );
+      return <div>jo</div>;
+    },
+    {
+      body: t.Object({
+        title: t.String({ minLength: 2 }),
+        amount: t.Number(),
+        debtorId: t.Number(),
+        creditorIds: t.Array(t.Number(), { minLength: 1 }),
+      }),
+    }
+  )
+  // Get all debts of a puppy (in JSON for now)
+  .get(
+    "/puppies/:id/debts",
+    async ({ body, set }) => {
+      const debtList = await db.query.debts.findMany({
+        with: {
+          debtor: true,
+          // puppies: true,
+          creditorsToDebts: {
+            with: {
+              user: true,
+            },
+          },
+        },
+      });
+
+      return debtList.map((debt) => ({
+        ...debt,
+        creditorsToDebts: undefined,
+        debtorId: undefined,
+        debtor: debt.debtor.name,
+        creditors: debt.creditorsToDebts.map((c) => c.user.name),
+      }));
+    },
+    {
+      params: t.Object({
+        id: t.Numeric(),
       }),
     }
   )
