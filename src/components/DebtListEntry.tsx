@@ -11,7 +11,7 @@ export default function DebtListEntry({
   puppyId: number;
 }) {
   return (
-    <li>
+    <li class="py-2 px-4 even:bg-gray-100">
       {debt.debtor} hat {debt.amount}€ für {debt.title} bezahlt
       <br />
       <small>
@@ -25,6 +25,7 @@ export default function DebtListEntry({
         hx-confirm="Ausgabe wirklich löschen?"
         hx-delete={`/puppies/${puppyId}/debts/${debt.id}`}
         hx-target="closest li"
+        hx-swap="outerHTML swap:.5s"
       >
         X
       </button>

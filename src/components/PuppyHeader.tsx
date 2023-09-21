@@ -16,7 +16,7 @@ export default function PuppyHeader({
     <div>
       <a href={backLink}>Back</a>
       <div class="flex">
-        <h1 class="text-4xl mr-auto">{title}</h1>
+        <h1 class="text-4xl mr-auto">🐶{title}</h1>
         {puppyId && <a href={`/puppies/${puppyId}/settings`}>Settings</a>}
       </div>
       {users && (

@@ -1,28 +1,35 @@
 import * as elements from "typed-html";
 import { User } from "../db/schema";
-import { SingleDebt } from "../util/settleDebts";
+import AddDebtForm from "./AddDebtForm";
 import DebtList from "./DebtList";
-import DebtSettlementList from "./DebtSettlementList";
 import PuppyHeader from "./PuppyHeader";
 
 export default function PuppyDetails({
   id,
   title,
   debts,
-  settleDebts,
   users,
 }: {
   debts: MyDebt[];
   id: number;
   title: string;
-  settleDebts: SingleDebt[];
   users: User[];
 }) {
   return (
     <div class="flex flex-col space-y-3">
       <PuppyHeader puppyId={id} title={title} users={users} backLink="/" />
-      <DebtList debts={debts} users={users} puppyId={id} />
-      <DebtSettlementList settleDebts={settleDebts} />
+      <AddDebtForm users={users} puppyId={id} />
+      <DebtList
+        debts={debts.slice(0, 5)}
+        users={users}
+        puppyId={id}
+        additionalListItem={
+          <li class="py-2 px-4 text-center">
+            <a href={`/puppies/${id}/debts`}>Show All</a>
+          </li>
+        }
+      />
+      <a href={`/puppies/${id}/settle`}>Settle</a>
     </div>
   );
 }

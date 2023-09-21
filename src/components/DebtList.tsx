@@ -1,6 +1,5 @@
 import * as elements from "typed-html";
 import { User } from "../db/schema";
-import AddDebtForm from "./AddDebtForm";
 import DebtListEntry from "./DebtListEntry";
 import { MyDebt } from "./PuppyDetails";
 
@@ -8,14 +7,18 @@ export default function DebtList({
   debts,
   users,
   puppyId,
+  title = "Ausgaben",
+  additionalListItem,
 }: {
   debts: MyDebt[];
   users: User[];
   puppyId: number;
+  title?: string;
+  additionalListItem?: string;
 }) {
   return (
     <section>
-      <h2 class="text-xl">Ausgaben</h2>
+      <h2 class="text-xl">{title}</h2>
       <ul class="m-0" id="debt-list">
         {debts?.map((d) => (
           <DebtListEntry
@@ -24,8 +27,8 @@ export default function DebtList({
             puppyId={puppyId}
           />
         ))}
+        {additionalListItem}
       </ul>
-      <AddDebtForm users={users} puppyId={puppyId} />
     </section>
   );
 }

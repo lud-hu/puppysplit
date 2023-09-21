@@ -88,5 +88,5 @@ export const creditorsToDebtsRelations = relations(
 );
 
 export type Puppy = InferModel<typeof puppies>;
-export type Debt = InferModel<typeof puppies>;
+export type Debt = InferModel<typeof debts>;
 export type User = InferModel<typeof users>;

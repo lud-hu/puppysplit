@@ -12,9 +12,9 @@ export default function AddDebtForm({
     <form
       hx-post={`/puppies/${puppyId}/debts`}
       hx-target="#debt-list"
-      hx-swap="beforeend"
+      hx-swap="afterbegin"
       hx-on="htmx:afterRequest: this.reset(); this.amount.focus();"
-      class="flex flex-col"
+      class="flex flex-col bg-gray-100 p-4 gap-4"
     >
       <div>Hinzufügen</div>
       <select name="debtorId">
@@ -22,16 +22,20 @@ export default function AddDebtForm({
           <option value={u.id.toString()}>{u.name}</option>
         ))}
       </select>
-      <label for="amount">Wie viel?</label>
-      <input
-        placeholder="12"
-        type="number"
-        name="amount"
-        id="amount"
-        step="0.01"
-      />
-      <label for="title">Wofür?</label>
-      <input placeholder="Bier" name="title" id="title" />
+      <div class="flex flex-col">
+        <label for="amount">Wie viel?</label>
+        <input
+          placeholder="12"
+          type="number"
+          name="amount"
+          id="amount"
+          step="0.01"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label for="title">Wofür?</label>
+        <input placeholder="Bier" name="title" id="title" />
+      </div>
       {/* TODO: Fix single selection not working */}
       <fieldset>
         <legend>Aufteilung</legend>

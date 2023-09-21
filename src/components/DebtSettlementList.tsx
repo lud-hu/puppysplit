@@ -7,7 +7,7 @@ export default function DebtSettlementList({
   settleDebts: SingleDebt[];
 }) {
   return (
-    <section>
+    <section id="debt-settlement-list">
       <h2 class="text-xl">Ausgleich</h2>
       <ul class="m-0">
         {settleDebts?.map((d) => (

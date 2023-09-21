@@ -1,17 +1,20 @@
 import { html } from "@elysiajs/html";
+import { desc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 import * as elements from "typed-html";
+import BaseHtml from "./components/BaseHtml";
+import DebtList from "./components/DebtList";
 import DebtListEntry from "./components/DebtListEntry";
-import PuppyDetails from "./components/PuppyDetails";
+import DebtSettlementList from "./components/DebtSettlementList";
+import PuppyDetails, { MyDebt } from "./components/PuppyDetails";
+import PuppyHeader from "./components/PuppyHeader";
 import PuppyItem from "./components/PuppyItem";
 import PuppyList from "./components/PuppyList";
-import { db } from "./db";
-import { creditorsToDebts, debts, puppies, users } from "./db/schema";
-import { settleDebts, unifyDebts } from "./util/settleDebts";
-import BaseHtml from "./components/BaseHtml";
 import PuppySettings from "./components/PuppySettings";
-import { eq } from "drizzle-orm";
 import UsersListItem from "./components/UsersListItem";
+import { db } from "./db";
+import { Debt, creditorsToDebts, debts, puppies, users } from "./db/schema";
+import { settleDebts, unifyDebts } from "./util/settleDebts";
 
 const app = new Elysia()
   .use(html())
@@ -31,6 +34,7 @@ const app = new Elysia()
         where: (puppies, { eq }) => eq(puppies.id, params.id),
         with: {
           debts: {
+            orderBy: (debts) => [desc(debts.date)],
             with: {
               debtor: true,
               creditorsToDebts: {
@@ -47,14 +51,7 @@ const app = new Elysia()
         return <div>Not found</div>;
       }
 
-      const debts =
-        data?.debts.map((debt) => ({
-          ...debt,
-          creditorsToDebts: undefined,
-          debtorId: undefined,
-          debtor: debt.debtor.name,
-          creditors: debt.creditorsToDebts.map((c) => c.user.name),
-        })) || [];
+      const debts = transformDebts(data.debts);
 
       const users = await db.query.users.findMany({
         where: (users, { eq }) => eq(users.puppyId, params.id),
@@ -68,7 +65,6 @@ const app = new Elysia()
               debts={debts}
               id={data.id}
               title={data.title}
-              settleDebts={settleDebts(unifyDebts(debts))}
               users={users}
             />
           </BaseHtml>
@@ -100,6 +96,110 @@ const app = new Elysia()
         return (
           <BaseHtml>
             <PuppySettings id={data.id} title={data.title} users={users} />
+          </BaseHtml>
+        );
+      }
+    },
+    {
+      params: t.Object({
+        id: t.Numeric(),
+      }),
+    }
+  )
+  .get(
+    "/puppies/:id/debts",
+    async ({ params, set }) => {
+      const data = await db.query.puppies.findFirst({
+        where: (puppies, { eq }) => eq(puppies.id, params.id),
+        with: {
+          debts: {
+            orderBy: (debts) => [desc(debts.date)],
+            with: {
+              debtor: true,
+              creditorsToDebts: {
+                with: {
+                  user: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!data) {
+        return <div>Not found</div>;
+      }
+
+      const debts = transformDebts(data.debts);
+
+      const users = await db.query.users.findMany({
+        where: (users, { eq }) => eq(users.puppyId, params.id),
+      });
+
+      if (data) {
+        return (
+          <BaseHtml>
+            <PuppyHeader
+              puppyId={data.id}
+              title={data.title}
+              users={users}
+              backLink={`/puppies/${data.id}`}
+            />
+            <DebtList
+              debts={debts}
+              users={users}
+              puppyId={data.id}
+              title="Alle Ausgaben"
+            />
+          </BaseHtml>
+        );
+      }
+    },
+    {
+      params: t.Object({
+        id: t.Numeric(),
+      }),
+    }
+  )
+  .get(
+    "/puppies/:id/settle",
+    async ({ params, set }) => {
+      const data = await db.query.puppies.findFirst({
+        where: (puppies, { eq }) => eq(puppies.id, params.id),
+        with: {
+          debts: {
+            orderBy: (debts) => [desc(debts.date)],
+            with: {
+              debtor: true,
+              creditorsToDebts: {
+                with: {
+                  user: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!data) {
+        return <div>Not found</div>;
+      }
+
+      const debts = transformDebts(data.debts);
+
+      const users = await db.query.users.findMany({
+        where: (users, { eq }) => eq(users.puppyId, params.id),
+      });
+
+      if (data) {
+        return (
+          <BaseHtml>
+            <PuppyHeader
+              title={data.title}
+              users={users}
+              backLink={`/puppies/${data.id}`}
+            />
+            <DebtSettlementList settleDebts={settleDebts(unifyDebts(debts))} />
           </BaseHtml>
         );
       }
@@ -287,3 +387,39 @@ const app = new Elysia()
 console.log(
   `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
 );
+
+const transformDebts = (
+  // TODO: Infer type from db scheme
+  debts: {
+    id: number;
+    title: string;
+    amount: number;
+    debtorId: number;
+    date: Date;
+    puppyId: number;
+    creditorsToDebts: {
+      userId: number;
+      debtId: number;
+      user: {
+        id: number;
+        name: string;
+        puppyId: number;
+      };
+    }[];
+    debtor: {
+      id: number;
+      name: string;
+      puppyId: number;
+    };
+  }[]
+): MyDebt[] => {
+  return (
+    debts.map((debt) => ({
+      ...debt,
+      creditorsToDebts: undefined,
+      debtorId: undefined,
+      debtor: debt.debtor.name,
+      creditors: debt.creditorsToDebts.map((c) => c.user.name),
+    })) || []
+  );
+};
