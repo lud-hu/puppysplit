@@ -20,7 +20,7 @@ export default function PuppyDetails({
 }) {
   return (
     <div class="flex flex-col space-y-3">
-      <PuppyHeader title={title} users={users} />
+      <PuppyHeader puppyId={id} title={title} users={users} backLink="/" />
       <DebtList debts={debts} users={users} puppyId={id} />
       <DebtSettlementList settleDebts={settleDebts} />
     </div>
@@ -35,4 +35,5 @@ export interface MyDebt {
   id: number;
   title: string;
   amount: number;
+  date?: Date;
 }

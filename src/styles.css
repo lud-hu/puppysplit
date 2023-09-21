@@ -12,3 +12,12 @@ html {
 a {
   text-decoration: underline;
 }
+
+/* Special stylings */
+
+#usersCheckboxList {
+  display: none;
+}
+#notBetweenAll:checked ~ #usersCheckboxList {
+  display: block;
+}

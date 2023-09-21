@@ -9,6 +9,9 @@ import { db } from "./db";
 import { creditorsToDebts, debts, puppies, users } from "./db/schema";
 import { settleDebts, unifyDebts } from "./util/settleDebts";
 import BaseHtml from "./components/BaseHtml";
+import PuppySettings from "./components/PuppySettings";
+import { eq } from "drizzle-orm";
+import UsersListItem from "./components/UsersListItem";
 
 const app = new Elysia()
   .use(html())
@@ -30,7 +33,6 @@ const app = new Elysia()
           debts: {
             with: {
               debtor: true,
-              // puppies: true,
               creditorsToDebts: {
                 with: {
                   user: true,
@@ -79,6 +81,35 @@ const app = new Elysia()
       }),
     }
   )
+  .get(
+    "/puppies/:id/settings",
+    async ({ params, set }) => {
+      const data = await db.query.puppies.findFirst({
+        where: (puppies, { eq }) => eq(puppies.id, params.id),
+      });
+
+      if (!data) {
+        return <div>Not found</div>;
+      }
+
+      const users = await db.query.users.findMany({
+        where: (users, { eq }) => eq(users.puppyId, params.id),
+      });
+
+      if (data) {
+        return (
+          <BaseHtml>
+            <PuppySettings id={data.id} title={data.title} users={users} />
+          </BaseHtml>
+        );
+      }
+    },
+    {
+      params: t.Object({
+        id: t.Numeric(),
+      }),
+    }
+  )
   .post(
     "/puppies",
     async ({ body, set }) => {
@@ -91,61 +122,123 @@ const app = new Elysia()
       }),
     }
   )
-  // Add a list of users to a puppy
+  // Add a user to a puppy
   .post(
     "/puppies/:id/users",
-    async ({ body, set, params }) => {
-      const newPuppy = await db
+    async ({ body, params }) => {
+      const user = await db
         .insert(users)
-        .values(body.names.map((e) => ({ name: e, puppyId: params.id })))
+        .values({ name: body.name, puppyId: params.id })
         .returning()
         .get();
-      return <div>jo</div>;
+      return <UsersListItem puppyId={params.id} user={user} />;
     },
     {
       body: t.Object({
-        names: t.Array(t.String({ minLength: 2 })),
+        name: t.String({ minLength: 1 }),
       }),
       params: t.Object({
         id: t.Numeric(),
       }),
     }
   )
+  // Delete a user from a puppy
+  .delete(
+    "/puppies/:id/users/:userId",
+    async ({ params }) => {
+      await db.delete(users).where(eq(users.id, params.userId));
+      // TODO: What to do with assigned debts?
+      return null;
+    },
+    {
+      params: t.Object({
+        id: t.Numeric(),
+        userId: t.Numeric(),
+      }),
+    }
+  )
   // Add a debt to a puppy
+  .delete(
+    "/puppies/:id/debts/:debtId",
+    async ({ params }) => {
+      await db
+        .delete(creditorsToDebts)
+        .where(eq(creditorsToDebts.debtId, params.debtId));
+      await db.delete(debts).where(eq(debts.id, params.debtId));
+
+      return null;
+    },
+    {
+      params: t.Object({
+        id: t.Numeric(),
+        debtId: t.Numeric(),
+      }),
+    }
+  )
   .post(
     "/puppies/:id/debts",
     async ({ body, params }) => {
       const newDebt = await db
         .insert(debts)
         .values({
-          amount: parseInt(body.amount),
+          amount: parseFloat(body.amount),
           debtorId: parseInt(body.debtorId),
           puppyId: params.id,
           title: body.title,
+          date: new Date(),
         })
         .returning()
         .get();
-
-      await db.insert(creditorsToDebts).values(
-        body.creditorIds.map((c) => ({
-          debtId: newDebt.id,
-          userId: parseInt(c),
-        }))
-      );
 
       const users = await db.query.users.findMany({
         where: (users, { eq }) => eq(users.puppyId, params.id),
       });
 
+      const getCreditorIds = () => {
+        const creditorIds = body.creditorIds;
+        if (body.splitSetting === "betweenAll") {
+          // If "betweenAll" is set we want to split the debt between all users
+          return users.map((u) => u.id);
+        } else if (creditorIds) {
+          if (Array.isArray(creditorIds) && creditorIds?.length > 0) {
+            // If an array of creditorIds is set, we want to split the debt between the selected users
+            return users
+              .filter((u) => creditorIds.includes(u.id.toString()))
+              .map((u) => u.id);
+          } else {
+            // If a single creditorId is set, we want to split the debt only for the selected user
+            return users
+              .filter((u) => creditorIds === u.id.toString())
+              .map((u) => u.id);
+          }
+        }
+
+        throw new Error(
+          'Either splitSetting="betweenAll" or creditorIds must be set'
+        );
+      };
+
+      const creditorIds = getCreditorIds();
+
+      await db.insert(creditorsToDebts).values(
+        creditorIds.map((c) => ({
+          debtId: newDebt.id,
+          userId: c,
+        }))
+      );
+
       return (
         <DebtListEntry
+          puppyId={params.id}
+          puppyUserCount={users.length}
           debt={{
             debtor: users.find((u) => u.id === newDebt.debtorId)?.name || "",
-            creditors: users
-              .filter((u) => body.creditorIds.includes(u.id.toString()))
-              .map((u) => u.name),
+            creditors: creditorIds.map(
+              (c) => users.find((u) => u.id === c)?.name || ""
+            ),
             amount: newDebt.amount,
             title: newDebt.title,
+            date: newDebt.date,
             creditorsToDebts: undefined,
             debtorId: undefined,
             id: newDebt.id,
@@ -158,16 +251,38 @@ const app = new Elysia()
         title: t.String({ minLength: 2 }),
         // TODO: How to accept number here directly?
         amount: t.String(),
+        // TODO: How to accept number here directly?
         debtorId: t.String(),
-        creditorIds: t.Array(t.String(), { minLength: 1 }),
+        creditorIds: t.Optional(
+          // TODO: How to accept number here directly?
+          t.Union([t.Array(t.String(), { minLength: 1 }), t.String()])
+        ),
+        splitSetting: t.String({
+          enum: ["betweenAll", "notBetweenAll"],
+        }),
       }),
       params: t.Object({
         id: t.Numeric(),
       }),
+      error({ code, error }) {
+        switch (code) {
+          case "VALIDATION":
+            console.log(error.all);
+
+            // Find a specific error name (path is OpenAPI Schema compliance)
+            const name = error.all.find((x) => x.path === "/name");
+
+            // If has validation error, then log it
+            if (name) console.log(name);
+        }
+      },
     }
   )
   .get("/styles.css", () => Bun.file("./tailwind-gen/styles.css"))
-  .listen(3000);
+  .listen(3000)
+  .onError((err) => {
+    console.trace(err);
+  });
 
 console.log(
   `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`

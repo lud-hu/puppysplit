@@ -1,10 +1,10 @@
-import { InferModel, relations } from "drizzle-orm";
+import { InferModel, relations, sql } from "drizzle-orm";
 import {
   integer,
+  primaryKey,
+  real,
   sqliteTable,
   text,
-  real,
-  primaryKey,
 } from "drizzle-orm/sqlite-core";
 
 export const puppies = sqliteTable("puppies", {
@@ -25,6 +25,10 @@ export const debts = sqliteTable("debts", {
   amount: real("amount").notNull(),
   debtorId: integer("debtorId", { mode: "number" }).notNull(),
   puppyId: integer("puppyId", { mode: "number" }).notNull(),
+  date: integer("date", { mode: "timestamp" })
+    .notNull()
+    // TODO: Default not working? :(
+    .default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const debtsRelations = relations(debts, ({ many, one }) => ({

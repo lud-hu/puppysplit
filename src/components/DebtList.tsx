@@ -18,7 +18,11 @@ export default function DebtList({
       <h2 class="text-xl">Ausgaben</h2>
       <ul class="m-0" id="debt-list">
         {debts?.map((d) => (
-          <DebtListEntry debt={d} />
+          <DebtListEntry
+            debt={d}
+            puppyUserCount={users.length}
+            puppyId={puppyId}
+          />
         ))}
       </ul>
       <AddDebtForm users={users} puppyId={puppyId} />
