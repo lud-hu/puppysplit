@@ -388,6 +388,9 @@ const app = new Elysia()
     }
   )
   .get("/styles.css", () => Bun.file("./tailwind-gen/styles.css"))
+  .get("/debtorSelectionPersistor.js", () =>
+    Bun.file("./src/debtorSelectionPersistor.js")
+  )
   .listen(3000)
   .onError((err) => {
     console.trace(err);

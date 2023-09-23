@@ -18,9 +18,11 @@ export default function AddDebtForm({
       class="flex flex-col bg-gray-100 p-4 gap-4 text-center"
     >
       <div class="text-xl">Ausgabe hinzufügen</div>
+      <script src="/debtorSelectionPersistor.js" />
       <select
         name="debtorId"
         class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+        hx-ext="debtorSelectionPersistor"
       >
         {users?.map((u) => (
           <option value={u.id.toString()}>{u.name}</option>
