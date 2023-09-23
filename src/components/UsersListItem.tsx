@@ -1,7 +1,7 @@
 import * as elements from "typed-html";
 import { User } from "../db/schema";
 
-export default function PuppyHeader({
+export default function UsersListItem({
   user,
   puppyId,
 }: {
@@ -9,15 +9,16 @@ export default function PuppyHeader({
   puppyId: number;
 }) {
   return (
-    <li>
+    <li class="p-2 even:bg-gray-100 flex justify-between">
       {user.name}{" "}
       <button
         // TODO: Use customized Confirm UI: https://htmx.org/examples/confirm/
-        hx-confirm="Teilnehmer wirklich löschen?"
+        hx-confirm="Delete Member?"
         hx-delete={`/puppies/${puppyId}/users/${user.id}`}
         hx-target="closest li"
+        class="underline text-red-500"
       >
-        X
+        Delete
       </button>
     </li>
   );

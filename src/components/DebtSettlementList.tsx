@@ -11,13 +11,13 @@ export default function DebtSettlementList({
 }) {
   return (
     <section id="debt-settlement-list">
-      <h2 class="text-xl">Ausgleich</h2>
+      <h2 class="text-xl">Settle Debts</h2>
       <ul class="m-0">
         {settleDebts.length > 0 ? (
           settleDebts?.map((d) => (
             <li>
               {/* TOOD: Proper rounding */}
-              {d.creditor} gibt {Math.round(d.amount * 100) / 100}€ an{" "}
+              {d.creditor} sends {Math.round(d.amount * 100) / 100}€ to{" "}
               {d.debtor}
               {users.find((u) => u.name === d.debtor)?.payPalHandle && (
                 <div class="pl-4">
@@ -26,14 +26,14 @@ export default function DebtSettlementList({
                       users.find((u) => u.name === d.debtor)?.payPalHandle
                     }/${Math.round(d.amount * 100) / 100}`}
                   >
-                    per Paypal
+                    via Paypal
                   </a>
                 </div>
               )}
             </li>
           ))
         ) : (
-          <li>Keine Ausgaben auszugleichen.</li>
+          <li>No expenses to settle.</li>
         )}
       </ul>
     </section>

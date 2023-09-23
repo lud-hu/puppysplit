@@ -12,11 +12,12 @@ export default function ManageUsersForm({
 }) {
   return (
     <section>
-      <ul id="users-list">
+      <ul id="users-list" class="mb-3">
         {users.map((u) => (
           <UsersListItem puppyId={puppyId} user={u} />
         ))}
       </ul>
+      <h2 class="text-xl my-3">Add Member</h2>
       <form
         hx-post={`/puppies/${puppyId}/users`}
         hx-target="#users-list"
@@ -26,7 +27,7 @@ export default function ManageUsersForm({
       >
         <Input placeholder="Name" name="name" label="Name" />
         <Input
-          label="PayPal-Me Adresse"
+          label="PayPal-Me Address"
           placeholder="PayPal Handle"
           name="payPalHandle"
           prefix="paypal.me/"
@@ -35,7 +36,7 @@ export default function ManageUsersForm({
           type="submit"
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
-          Hinzufügen
+          Add
         </button>
       </form>
     </section>

@@ -12,17 +12,17 @@ export default function DebtListEntry({
 }) {
   return (
     <li class="py-2 px-4 even:bg-gray-100">
-      {debt.debtor} hat {debt.amount}€ für {debt.title} bezahlt
+      {debt.debtor} paid {debt.amount}€ for {debt.title}
       <br />
       <small>
-        Teilnehmer:{" "}
+        Members:{" "}
         {debt.creditors.length === puppyUserCount
-          ? "Alle"
+          ? "All"
           : debt.creditors.join(", ")}
-        am {debt.date?.toLocaleDateString()}
+        on {debt.date?.toLocaleDateString()}
       </small>
       <button
-        hx-confirm="Ausgabe wirklich löschen?"
+        hx-confirm="Delete Expense?"
         hx-delete={`/puppies/${puppyId}/debts/${debt.id}`}
         hx-target="closest li"
         hx-swap="outerHTML swap:.5s"

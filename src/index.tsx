@@ -8,12 +8,13 @@ import DebtListEntry from "./components/DebtListEntry";
 import DebtSettlementList from "./components/DebtSettlementList";
 import PuppyDetails, { MyDebt } from "./components/PuppyDetails";
 import PuppyHeader from "./components/PuppyHeader";
-import PuppyItem from "./components/PuppyItem";
 import PuppyList from "./components/PuppyList";
 import PuppySettings from "./components/PuppySettings";
+import PuppySettingsHeader from "./components/PuppySettingsHeader";
+import TitleEditForm from "./components/TitleEditForm";
 import UsersListItem from "./components/UsersListItem";
 import { db } from "./db";
-import { Debt, creditorsToDebts, debts, puppies, users } from "./db/schema";
+import { creditorsToDebts, debts, puppies, users } from "./db/schema";
 import { settleDebts, unifyDebts } from "./util/settleDebts";
 
 const app = new Elysia()
@@ -70,6 +71,77 @@ const app = new Elysia()
           </BaseHtml>
         );
       }
+    },
+    {
+      params: t.Object({
+        id: t.Numeric(),
+      }),
+    }
+  )
+  .get(
+    "/puppies/:id/titleEdit",
+    async ({ params, set }) => {
+      const data = await db.query.puppies.findFirst({
+        where: (puppies, { eq }) => eq(puppies.id, params.id),
+      });
+
+      if (!data) {
+        return <div>Not found</div>;
+      }
+
+      if (data) {
+        return <TitleEditForm puppyId={params.id} title={data.title} />;
+      }
+    },
+    {
+      params: t.Object({
+        id: t.Numeric(),
+      }),
+    }
+  )
+  .put(
+    "/puppies/:id/title",
+    async ({ body, set, params }) => {
+      await db
+        .update(puppies)
+        .set({ title: body.title })
+        .where(eq(puppies.id, params.id));
+
+      return (
+        <PuppySettingsHeader
+          title={body.title}
+          backLink={`/puppies/${params.id}`}
+          puppyId={params.id}
+        />
+      );
+    },
+    {
+      body: t.Object({
+        title: t.String({ minLength: 1 }),
+      }),
+      params: t.Object({
+        id: t.Numeric(),
+      }),
+    }
+  )
+  .get(
+    "/puppies/:id/title",
+    async ({ body, set, params }) => {
+      const data = await db.query.puppies.findFirst({
+        where: (puppies, { eq }) => eq(puppies.id, params.id),
+      });
+
+      if (!data) {
+        return <div>Not found</div>;
+      }
+
+      return (
+        <PuppySettingsHeader
+          title={data.title}
+          backLink={`/puppies/${data.id}`}
+          puppyId={data.id}
+        />
+      );
     },
     {
       params: t.Object({
@@ -149,7 +221,7 @@ const app = new Elysia()
               debts={debts}
               users={users}
               puppyId={data.id}
-              title="Alle Ausgaben"
+              title="All Expenses"
             />
           </BaseHtml>
         );

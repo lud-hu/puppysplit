@@ -7,6 +7,7 @@ export default function Input({
   type = "text",
   name,
   prefix,
+  value,
 }: {
   id?: string;
   placeholder?: string;
@@ -14,6 +15,7 @@ export default function Input({
   type?: string;
   name: string;
   prefix?: string;
+  value?: string;
 }) {
   console.log("name", name);
 
@@ -45,6 +47,7 @@ export default function Input({
             type={type}
             name={name}
             placeholder={placeholder || ""}
+            value={value || ""}
           />
         </span>
       ) : (
@@ -54,6 +57,7 @@ export default function Input({
           type={type}
           name={name}
           placeholder={placeholder || ""}
+          value={value || ""}
         />
       )}
     </div>

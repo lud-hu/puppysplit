@@ -1,7 +1,7 @@
 import * as elements from "typed-html";
 import { User } from "../db/schema";
 import ManageUsersForm from "./ManageUsersForm";
-import PuppyHeader from "./PuppyHeader";
+import PuppySettingsHeader from "./PuppySettingsHeader";
 
 export default function PuppySettings({
   id,
@@ -14,8 +14,12 @@ export default function PuppySettings({
 }) {
   return (
     <div class="flex flex-col space-y-3">
-      <PuppyHeader title={title} backLink={`/puppies/${id}`} />
-      <h2 class="text-xl">Teilnehmer hinzufügen</h2>
+      <PuppySettingsHeader
+        title={title}
+        backLink={`/puppies/${id}`}
+        puppyId={id}
+      />
+      <h2 class="text-xl">Members</h2>
       <ManageUsersForm puppyId={id} users={users} />
     </div>
   );

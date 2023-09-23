@@ -7,7 +7,7 @@ export default function DebtList({
   debts,
   users,
   puppyId,
-  title = "Ausgaben",
+  title = "Expenses",
   additionalListItem,
 }: {
   debts: MyDebt[];

@@ -17,7 +17,7 @@ export default function AddDebtForm({
       hx-on="htmx:afterRequest: this.reset(); this.amount.focus();"
       class="flex flex-col bg-gray-100 p-4 gap-4 text-center"
     >
-      <div class="text-xl">Ausgabe hinzufügen</div>
+      <div class="text-xl">Add expense</div>
       <script src="/debtorSelectionPersistor.js" />
       <select
         name="debtorId"
@@ -32,13 +32,13 @@ export default function AddDebtForm({
         id="amount"
         name="amount"
         type="number"
-        label="zahlte"
+        label="paid"
         placeholder="12 €"
       />
-      <Input id="title" name="title" label="für" placeholder="Dinge" />
+      <Input id="title" name="title" label="for" placeholder="Dinge" />
       <fieldset>
         <legend class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-          aufgeteilt zwischen
+          split between
         </legend>
         <div class="text-left">
           <input
@@ -48,7 +48,7 @@ export default function AddDebtForm({
             value="betweenAll"
             checked
           />
-          <label for="betweenAll">allen Teilnehmern</label>
+          <label for="betweenAll">all members</label>
         </div>
         <div class="text-left">
           <input
@@ -57,7 +57,7 @@ export default function AddDebtForm({
             name="splitSetting"
             value="notBetweenAll"
           />
-          <label for="notBetweenAll">folgenden Teilnehmern:</label>
+          <label for="notBetweenAll">the following members:</label>
           <div id="usersCheckboxList" class="pl-4">
             {users?.map((u) => (
               <div>
@@ -77,7 +77,7 @@ export default function AddDebtForm({
         type="submit"
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
-        Hinzufügen
+        Add
       </button>
     </form>
   );

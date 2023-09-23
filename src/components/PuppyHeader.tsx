@@ -13,7 +13,7 @@ export default function PuppyHeader({
   backLink: string;
 }) {
   return (
-    <div>
+    <div id="puppy-header">
       <a href={backLink}>Back</a>
       <div class="flex">
         <h1 class="text-4xl mr-auto">🐶{title}</h1>
@@ -21,7 +21,7 @@ export default function PuppyHeader({
       </div>
       {users && (
         <small>
-          Teilnehmer:{" "}
+          Members:{" "}
           {users.map((u, i) => (
             <span>{i < users.length - 1 ? `${u.name}, ` : u.name}</span>
           ))}
