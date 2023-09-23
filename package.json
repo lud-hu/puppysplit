@@ -5,6 +5,8 @@
   "scripts": {
     "db:push": "bunx drizzle-kit push:sqlite",
     "db:studio": "bunx drizzle-kit studio",
+    "db:clear": "bun run ./src/db/tools/clearDb.ts",
+    "db:seed": "bun run ./src/db/tools/seedDb.ts",
     "dev": "concurrently \"bun run --watch src/index.tsx\" \"bun run tw:dev\"",
     "tw": "bunx tailwindcss -i ./src/styles.css -o ./tailwind-gen/styles.css",
     "tw:dev": "bunx tailwindcss -i ./src/styles.css -o ./tailwind-gen/styles.css --watch",
@@ -22,9 +24,9 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@elysiajs/html": "^0.6.6",
+    "@elysiajs/html": "^0.7.0",
     "@libsql/client": "^0.3.4",
     "drizzle-orm": "^0.28.6",
-    "elysia": "^0.6.24"
+    "elysia": "^0.7.12"
   }
 }

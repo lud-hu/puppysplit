@@ -6,9 +6,6 @@ import PuppyItem from "./PuppyItem";
 export default function PuppyList({ puppies }: { puppies: Puppy[] }) {
   return (
     <div>
-      {puppies.map((puppy) => (
-        <PuppyItem {...puppy} />
-      ))}
       <NewPuppyForm />
     </div>
   );

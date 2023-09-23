@@ -199,7 +199,10 @@ const app = new Elysia()
               users={users}
               backLink={`/puppies/${data.id}`}
             />
-            <DebtSettlementList settleDebts={settleDebts(unifyDebts(debts))} />
+            <DebtSettlementList
+              settleDebts={settleDebts(unifyDebts(debts))}
+              users={users}
+            />
           </BaseHtml>
         );
       }
@@ -214,7 +217,8 @@ const app = new Elysia()
     "/puppies",
     async ({ body, set }) => {
       const newPuppy = await db.insert(puppies).values(body).returning().get();
-      return <PuppyItem {...newPuppy} />;
+      set.headers["HX-Redirect"] = `/puppies/${newPuppy.id}/settings`;
+      return null;
     },
     {
       body: t.Object({
@@ -228,7 +232,11 @@ const app = new Elysia()
     async ({ body, params }) => {
       const user = await db
         .insert(users)
-        .values({ name: body.name, puppyId: params.id })
+        .values({
+          name: body.name,
+          puppyId: params.id,
+          payPalHandle: body.payPalHandle,
+        })
         .returning()
         .get();
       return <UsersListItem puppyId={params.id} user={user} />;
@@ -236,6 +244,7 @@ const app = new Elysia()
     {
       body: t.Object({
         name: t.String({ minLength: 1 }),
+        payPalHandle: t.Optional(t.String()),
       }),
       params: t.Object({
         id: t.Numeric(),

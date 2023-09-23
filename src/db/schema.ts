@@ -46,8 +46,8 @@ export const debtsRelations = relations(debts, ({ many, one }) => ({
 export const users = sqliteTable("users", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
-  // puppyId: integer("puppy_id").references(() => puppies.id),
   puppyId: integer("puppyId", { mode: "number" }).notNull(),
+  payPalHandle: text("payPalHandle"),
 });
 
 export const usersRelations = relations(users, ({ many, one }) => ({

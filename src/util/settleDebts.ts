@@ -3,6 +3,7 @@ export interface SingleDebt {
    * The debtor (Schuldner, leiht geld aus) is the one who owes money.
    */
   debtor: string;
+  debtorPayPalHandle?: string;
   /**
    * The creditor (Gläubiger, verleiht geld) is the one who is owed money.
    */

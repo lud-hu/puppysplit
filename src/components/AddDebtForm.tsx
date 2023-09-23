@@ -1,5 +1,6 @@
 import * as elements from "typed-html";
 import { User } from "../db/schema";
+import Input from "./Input";
 
 export default function AddDebtForm({
   users,
@@ -14,33 +15,30 @@ export default function AddDebtForm({
       hx-target="#debt-list"
       hx-swap="afterbegin"
       hx-on="htmx:afterRequest: this.reset(); this.amount.focus();"
-      class="flex flex-col bg-gray-100 p-4 gap-4"
+      class="flex flex-col bg-gray-100 p-4 gap-4 text-center"
     >
-      <div>Hinzufügen</div>
-      <select name="debtorId">
+      <div class="text-xl">Ausgabe hinzufügen</div>
+      <select
+        name="debtorId"
+        class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+      >
         {users?.map((u) => (
           <option value={u.id.toString()}>{u.name}</option>
         ))}
       </select>
-      <div class="flex flex-col">
-        <label for="amount">Wie viel?</label>
-        <input
-          placeholder="12"
-          type="number"
-          name="amount"
-          id="amount"
-          step="0.01"
-        />
-      </div>
-      <div class="flex flex-col">
-        <label for="title">Wofür?</label>
-        <input placeholder="Bier" name="title" id="title" />
-      </div>
-      {/* TODO: Fix single selection not working */}
+      <Input
+        id="amount"
+        name="amount"
+        type="number"
+        label="zahlte"
+        placeholder="12 €"
+      />
+      <Input id="title" name="title" label="für" placeholder="Dinge" />
       <fieldset>
-        <legend>Aufteilung</legend>
-
-        <div>
+        <legend class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+          aufgeteilt zwischen
+        </legend>
+        <div class="text-left">
           <input
             type="radio"
             id="betweenAll"
@@ -48,18 +46,17 @@ export default function AddDebtForm({
             value="betweenAll"
             checked
           />
-          <label for="betweenAll">Zwischen allen aufteilen</label>
+          <label for="betweenAll">allen Teilnehmern</label>
         </div>
-
-        <div>
+        <div class="text-left">
           <input
             type="radio"
             id="notBetweenAll"
             name="splitSetting"
             value="notBetweenAll"
           />
-          <label for="notBetweenAll">Anders aufteilen</label>
-          <div id="usersCheckboxList">
+          <label for="notBetweenAll">folgenden Teilnehmern:</label>
+          <div id="usersCheckboxList" class="pl-4">
             {users?.map((u) => (
               <div>
                 <input
@@ -74,7 +71,12 @@ export default function AddDebtForm({
           </div>
         </div>
       </fieldset>
-      <button type="submit">Los</button>
+      <button
+        type="submit"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Hinzufügen
+      </button>
     </form>
   );
 }
