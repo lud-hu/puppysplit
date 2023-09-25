@@ -1,5 +1,8 @@
 import * as elements from "typed-html";
 import { User } from "../db/schema";
+import getPuppyIcon from "../util/getPuppyIcon";
+import SettingsIcon from "./icons/SettingsIcon";
+import LeftArrow from "./icons/LeftArrow";
 
 export default function PuppyHeader({
   puppyId,
@@ -10,14 +13,33 @@ export default function PuppyHeader({
   puppyId?: number;
   title: string;
   users?: User[];
-  backLink: string;
+  backLink?: string;
 }) {
   return (
-    <div id="puppy-header">
-      <a href={backLink}>Back</a>
+    <header id="puppy-header" class="p-4">
+      {backLink && (
+        <a
+          href={backLink}
+          aria-label="Back"
+          class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold h-10 w-10 rounded inline-flex items-center justify-center"
+        >
+          <LeftArrow />
+        </a>
+      )}
       <div class="flex">
-        <h1 class="text-4xl mr-auto">🐶{title}</h1>
-        {puppyId && <a href={`/puppies/${puppyId}/settings`}>Settings</a>}
+        <h1 class="text-4xl mr-auto block tracking-wide text-gray-700 font-bold">
+          {puppyId && getPuppyIcon(puppyId)}
+          {title}
+        </h1>
+        {puppyId && (
+          <a
+            href={`/puppies/${puppyId}/settings`}
+            aria-label="Settings"
+            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold h-10 w-10 rounded inline-flex items-center justify-center"
+          >
+            <SettingsIcon />
+          </a>
+        )}
       </div>
       {users && (
         <small>
@@ -27,6 +49,6 @@ export default function PuppyHeader({
           ))}
         </small>
       )}
-    </div>
+    </header>
   );
 }

@@ -18,8 +18,10 @@ export default function DebtList({
 }) {
   return (
     <section>
-      <h2 class="text-xl">{title}</h2>
-      <ul class="m-0" id="debt-list">
+      <h2 class="text-2xl mb-3 pl-4 block uppercase tracking-wide text-gray-700 font-bold">
+        {title}
+      </h2>
+      <ul class="m-0 p-4 bg-gray-100" id="debt-list">
         {debts?.map((d) => (
           <DebtListEntry
             debt={d}

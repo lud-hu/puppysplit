@@ -11,7 +11,7 @@ export default function DebtListEntry({
   puppyId: number;
 }) {
   return (
-    <li class="py-2 px-4 even:bg-gray-100">
+    <li class="py-2 px-4 not-last:border-b-2 border-gray-300">
       {debt.debtor} paid {debt.amount}€ for {debt.title}
       <br />
       <small>
