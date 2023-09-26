@@ -19,7 +19,9 @@ export default function PuppySettings({
         backLink={`/puppies/${id}`}
         puppyId={id}
       />
-      <h2 class="text-xl">Members</h2>
+      <h2 class="text-2xl mb-3 block uppercase tracking-wide text-gray-700 font-bold">
+        Members
+      </h2>
       <ManageUsersForm puppyId={id} users={users} />
     </div>
   );

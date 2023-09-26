@@ -17,7 +17,9 @@ export default function ManageUsersForm({
           <UsersListItem puppyId={puppyId} user={u} />
         ))}
       </ul>
-      <h2 class="text-xl my-3">Add Member</h2>
+      <h2 class="text-2xl mt-10 mb-3 block uppercase tracking-wide text-gray-700 font-bold">
+        Add Member
+      </h2>
       <form
         hx-post={`/puppies/${puppyId}/users`}
         hx-target="#users-list"
@@ -27,7 +29,7 @@ export default function ManageUsersForm({
       >
         <Input placeholder="Name" name="name" label="Name" />
         <Input
-          label="PayPal-Me Address"
+          label="PayPal-Me Address (Optional)"
           placeholder="PayPal Handle"
           name="payPalHandle"
           prefix="paypal.me/"

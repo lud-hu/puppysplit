@@ -16,12 +16,12 @@ export default function PuppyHeader({
   backLink?: string;
 }) {
   return (
-    <header id="puppy-header" class="p-4">
+    <header id="puppy-header" class="py-4 mt-8">
       {backLink && (
         <a
           href={backLink}
           aria-label="Back"
-          class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold h-10 w-10 rounded inline-flex items-center justify-center"
+          class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold h-10 w-10 rounded inline-flex items-center justify-center mb-4"
         >
           <LeftArrow />
         </a>

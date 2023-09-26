@@ -1,5 +1,6 @@
 import * as elements from "typed-html";
 import { MyDebt } from "./PuppyDetails";
+import DeleteIcon from "./icons/DeleteIcon";
 
 export default function DebtListEntry({
   debt,
@@ -11,23 +12,26 @@ export default function DebtListEntry({
   puppyId: number;
 }) {
   return (
-    <li class="py-2 px-4 not-last:border-b-2 border-gray-300">
-      {debt.debtor} paid {debt.amount}€ for {debt.title}
-      <br />
-      <small>
-        Members:{" "}
-        {debt.creditors.length === puppyUserCount
-          ? "All"
-          : debt.creditors.join(", ")}
-        on {debt.date?.toLocaleDateString()}
-      </small>
+    <li class="py-2 px-4 not-last:border-b-2 border-gray-300 flex justify-between">
+      <div>
+        {debt.debtor} paid {debt.amount}€ for {debt.title}
+        <br />
+        <small>
+          Members:{" "}
+          {debt.creditors.length === puppyUserCount
+            ? "All"
+            : debt.creditors.join(", ")}
+          on {debt.date?.toLocaleDateString()}
+        </small>
+      </div>
       <button
         hx-confirm="Delete Expense?"
         hx-delete={`/puppies/${puppyId}/debts/${debt.id}`}
         hx-target="closest li"
         hx-swap="outerHTML swap:.5s"
+        class="px-5"
       >
-        X
+        <DeleteIcon />
       </button>
     </li>
   );

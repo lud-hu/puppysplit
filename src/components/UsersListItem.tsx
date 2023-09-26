@@ -1,5 +1,6 @@
 import * as elements from "typed-html";
 import { User } from "../db/schema";
+import DeleteIcon from "./icons/DeleteIcon";
 
 export default function UsersListItem({
   user,
@@ -13,12 +14,12 @@ export default function UsersListItem({
       {user.name}{" "}
       <button
         // TODO: Use customized Confirm UI: https://htmx.org/examples/confirm/
-        hx-confirm="Delete Member?"
+        hx-confirm={`Delete ${user.name}?`}
         hx-delete={`/puppies/${puppyId}/users/${user.id}`}
         hx-target="closest li"
-        class="underline text-red-500"
+        class="underline text-red-500 px-5"
       >
-        Delete
+        <DeleteIcon />
       </button>
     </li>
   );

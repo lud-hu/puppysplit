@@ -3,19 +3,35 @@ import * as elements from "typed-html";
 export default function LeftArrow() {
   return (
     <svg
-      class="w-10 h-10 text-gray-800 dark:text-white"
-      aria-hidden="true"
+      class="w-5 h-5 text-gray-800"
+      viewBox="0 0 25 18"
+      version="1.1"
       xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 28 20"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
     >
-      <path
-        stroke="currentColor"
+      {/* @ts-ignore  */}
+      <g
+        id="Page-1"
+        stroke="none"
+        stroke-width="1"
+        fill="none"
+        fill-rule="evenodd"
         stroke-linecap="round"
         stroke-linejoin="round"
-        stroke-width="2"
-        d="M13 5H1m0 0 4 4M1 5l4-4"
-      />
+      >
+        {/* @ts-ignore  */}
+        <g
+          id="Group"
+          transform="translate(2.000000, 2.000000)"
+          stroke="#000000"
+          stroke-width="3"
+        >
+          {/* @ts-ignore  */}
+          <path d="M21,7 L0,7 M0,7 L7,14 M0,7 L7,0" id="Shape"></path>
+          {/* @ts-ignore  */}
+        </g>
+        {/* @ts-ignore  */}
+      </g>
     </svg>
   );
 }
