@@ -432,10 +432,8 @@ const app = new Elysia()
         title: t.String({ minLength: 2 }),
         // TODO: How to accept number here directly?
         amount: t.String(),
-        // TODO: How to accept number here directly?
         debtorId: t.String(),
         creditorIds: t.Optional(
-          // TODO: How to accept number here directly?
           t.Union([t.Array(t.String(), { minLength: 1 }), t.String()])
         ),
         splitSetting: t.String({
