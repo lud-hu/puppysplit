@@ -12,12 +12,12 @@ export default function ManageUsersForm({
 }) {
   return (
     <section>
-      <ul id="users-list" class="mb-3">
+      <ul id="users-list" class="p-4 bg-gray-100">
         {users.map((u) => (
           <UsersListItem puppyId={puppyId} user={u} />
         ))}
       </ul>
-      <h2 class="text-2xl mt-10 mb-3 block uppercase tracking-wide text-gray-700 font-bold">
+      <h2 class="pl-4 text-2xl mt-10 mb-3 block uppercase tracking-wide text-gray-700 font-bold">
         Add Member
       </h2>
       <form
@@ -25,7 +25,7 @@ export default function ManageUsersForm({
         hx-target="#users-list"
         hx-swap="beforeend"
         hx-on="htmx:afterRequest: this.reset(); this.name.focus();"
-        class="flex flex-col gap-4"
+        class="p-4 pb-8 bg-gray-100 flex flex-col gap-4"
       >
         <Input placeholder="Name" name="name" label="Name" />
         <Input

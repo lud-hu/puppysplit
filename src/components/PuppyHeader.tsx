@@ -16,7 +16,7 @@ export default function PuppyHeader({
   backLink?: string;
 }) {
   return (
-    <header id="puppy-header" class="py-4 mt-8">
+    <header id="puppy-header" class="p-4 mt-8">
       {backLink && (
         <a
           href={backLink}

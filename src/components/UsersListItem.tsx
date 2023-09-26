@@ -10,7 +10,7 @@ export default function UsersListItem({
   puppyId: number;
 }) {
   return (
-    <li class="p-2 even:bg-gray-100 flex justify-between">
+    <li class="py-4 px-4 not-last:border-b-2 border-gray-300 flex justify-between">
       {user.name}{" "}
       <button
         // TODO: Use customized Confirm UI: https://htmx.org/examples/confirm/

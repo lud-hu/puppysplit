@@ -17,7 +17,7 @@ export default function DebtSettlementList({
       <ul class="m-0 p-4 bg-gray-100">
         {settleDebts.length > 0 ? (
           settleDebts?.map((d) => (
-            <li class="py-2 px-4  not-last:border-b-2 border-gray-300">
+            <li class="py-2 px-4 not-last:border-b-2 border-gray-300">
               {/* TOOD: Proper rounding */}
               {d.creditor} sends {Math.round(d.amount * 100) / 100}€ to{" "}
               {d.debtor}
