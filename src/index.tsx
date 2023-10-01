@@ -8,7 +8,7 @@ import DebtListEntry from "./components/DebtListEntry";
 import DebtSettlementList from "./components/DebtSettlementList";
 import PuppyDetails, { MyDebt } from "./components/PuppyDetails";
 import PuppyHeader from "./components/PuppyHeader";
-import PuppyList from "./components/PuppyList";
+import PuppyLandingPage from "./components/PuppyLandingPage";
 import PuppySettings from "./components/PuppySettings";
 import PuppySettingsHeader from "./components/PuppySettingsHeader";
 import TitleEditForm from "./components/TitleEditForm";
@@ -24,7 +24,7 @@ const app = new Elysia()
     const data = await db.select().from(puppies).all();
     return html(
       <BaseHtml>
-        <PuppyList puppies={data} />
+        <PuppyLandingPage />
       </BaseHtml>
     );
   })
@@ -61,7 +61,7 @@ const app = new Elysia()
       if (data) {
         // set.headers["HX-Push-Url"] = `/puppies/${params.id}`;
         return (
-          <BaseHtml>
+          <BaseHtml pageTitle={data.title + " - Puppysplit"}>
             <PuppyDetails
               debts={debts}
               id={data.id}
@@ -166,7 +166,7 @@ const app = new Elysia()
 
       if (data) {
         return (
-          <BaseHtml>
+          <BaseHtml pageTitle={data.title + " - Einstellungen - Puppysplit"}>
             <PuppySettings id={data.id} title={data.title} users={users} />
           </BaseHtml>
         );
@@ -210,7 +210,7 @@ const app = new Elysia()
 
       if (data) {
         return (
-          <BaseHtml>
+          <BaseHtml pageTitle={data.title + " - Puppysplit"}>
             <PuppyHeader
               puppyId={data.id}
               title={data.title}
@@ -265,7 +265,7 @@ const app = new Elysia()
 
       if (data) {
         return (
-          <BaseHtml>
+          <BaseHtml pageTitle={data.title + " - Puppysplit"}>
             <PuppyHeader
               title={data.title}
               users={users}
