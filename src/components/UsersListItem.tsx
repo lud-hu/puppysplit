@@ -17,6 +17,7 @@ export default function UsersListItem({
         hx-confirm={`Delete ${user.name}?`}
         hx-delete={`/puppies/${puppyId}/users/${user.id}`}
         hx-target="closest li"
+        hx-swap="outerHTML"
         class="underline text-red-500 px-5"
       >
         <DeleteIcon />
