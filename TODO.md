@@ -5,5 +5,4 @@
   - split expenses not equally between all selected members but with different amounts
   - add expense type "income", so basically just a negative expense. e.g. if someone got the deposit back
 - refactorings:
-  - put route handle functions into separate files (but how?)
   - extend route handlers to check for full page reloads vs partial reloads (together with hx-boost?)
