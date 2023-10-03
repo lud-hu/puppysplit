@@ -8,15 +8,59 @@ test("multi-creditor debts are properly unified", () => {
     { debtor: "C", creditors: ["A", "B", "C"], amount: 39 },
   ];
   const singleDebts: SingleDebt[] = [
-    { debtor: "A", creditor: "B", amount: 14 / 3 },
-    { debtor: "A", creditor: "C", amount: 14 / 3 },
-    { debtor: "B", creditor: "A", amount: 66 / 3 },
-    { debtor: "B", creditor: "C", amount: 66 / 3 },
-    { debtor: "C", creditor: "A", amount: 39 / 3 },
-    { debtor: "C", creditor: "B", amount: 39 / 3 },
+    { debtor: "A", creditor: "B", amount: 4.67 },
+    { debtor: "A", creditor: "C", amount: 4.67 },
+    { debtor: "B", creditor: "A", amount: 22 },
+    { debtor: "B", creditor: "C", amount: 22 },
+    { debtor: "C", creditor: "A", amount: 13 },
+    { debtor: "C", creditor: "B", amount: 13 },
   ];
   const unifiedDebts = unifyDebts(debts);
   expect(unifiedDebts).toStrictEqual(singleDebts);
+});
+
+test("example 0: proper rounding", () => {
+  const debts: SingleDebt[] = [
+    {
+      debtor: "Ludwig",
+      creditor: "Bene",
+      amount: 4.33,
+    },
+    {
+      debtor: "Ludwig",
+      creditor: "Hans",
+      amount: 4.33,
+    },
+    {
+      debtor: "Ludwig",
+      creditor: "Bene",
+      amount: 11.5,
+    },
+    {
+      debtor: "Ludwig",
+      creditor: "Bene",
+      amount: 12,
+    },
+    {
+      debtor: "Ludwig",
+      creditor: "Bene",
+      amount: 6,
+    },
+  ];
+  const transactions = settleDebts(debts);
+
+  expect(transactions).toStrictEqual([
+    {
+      debtor: "Ludwig",
+      creditor: "Bene",
+      amount: 33.83,
+    },
+    {
+      debtor: "Ludwig",
+      creditor: "Hans",
+      amount: 4.33,
+    },
+  ]);
 });
 
 test("example 1: debt is calculated correctly", () => {
@@ -44,23 +88,23 @@ test("example 1: debt is calculated correctly", () => {
 
 test("example 2: debt is calculated correctly", () => {
   const debts: SingleDebt[] = [
-    { debtor: "C", creditor: "A", amount: 39 / 3 },
-    { debtor: "C", creditor: "B", amount: 39 / 3 },
-    { debtor: "A", creditor: "C", amount: 14 / 3 },
-    { debtor: "A", creditor: "B", amount: 14 / 3 },
-    { debtor: "B", creditor: "A", amount: 66 / 3 },
-    { debtor: "B", creditor: "C", amount: 66 / 3 },
+    { debtor: "C", creditor: "A", amount: 13 },
+    { debtor: "C", creditor: "B", amount: 13 },
+    { debtor: "A", creditor: "C", amount: 4.67 },
+    { debtor: "A", creditor: "B", amount: 4.67 },
+    { debtor: "B", creditor: "A", amount: 22 },
+    { debtor: "B", creditor: "C", amount: 22 },
   ];
   const transactions = settleDebts(debts);
 
   expect(transactions).toStrictEqual([
     {
-      amount: 25.666666666666664,
+      amount: 25.66,
       creditor: "A",
       debtor: "B",
     },
     {
-      amount: 0.6666666666666679,
+      amount: 0.67,
       creditor: "C",
       debtor: "B",
     },
@@ -99,17 +143,17 @@ test("integrate debt unification in debt calculation", () => {
     {
       debtor: "D",
       creditor: "K",
-      amount: 167.375,
+      amount: 167.38,
     },
     {
       debtor: "D",
       creditor: "S",
-      amount: 98.25,
+      amount: 98.24,
     },
     {
       debtor: "L",
       creditor: "S",
-      amount: 53.125,
+      amount: 53.14,
     },
   ]);
 });

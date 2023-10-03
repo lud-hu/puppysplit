@@ -18,6 +18,9 @@ export interface Debt extends Omit<SingleDebt, "creditor"> {
   creditors: string[];
 }
 
+const roundTwoDecimals = (num: number) =>
+  Math.round((num + Number.EPSILON) * 100) / 100;
+
 /**
  * Takes debts with multiple creditors and converts
  * them to debts with a single creditor.
@@ -34,7 +37,7 @@ export const unifyDebts = (debts: Debt[]): SingleDebt[] => {
       .map((creditor) => ({
         debtor: debt.debtor,
         creditor,
-        amount: debt.amount / debt.creditors.length,
+        amount: roundTwoDecimals(debt.amount / debt.creditors.length),
       }))
   );
 };
@@ -86,8 +89,8 @@ export function settleDebts(debts: SingleDebt[]): SingleDebt[] {
       const debtor = debtors[i];
       const creditor = creditors[0];
       const amount = Math.min(-balanceMap[debtor], balanceMap[creditor]);
-      balanceMap[debtor] += amount;
-      balanceMap[creditor] -= amount;
+      balanceMap[debtor] = roundTwoDecimals(balanceMap[debtor] + amount);
+      balanceMap[creditor] = roundTwoDecimals(balanceMap[creditor] - amount);
       transactions.push({ debtor, creditor, amount });
       if (balanceMap[creditor] === 0) {
         creditors.shift();
