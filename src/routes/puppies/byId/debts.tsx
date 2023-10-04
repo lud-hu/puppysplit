@@ -140,14 +140,18 @@ const puppiesByIndexDebtsRoutes = new Elysia()
           puppyUserCount={users.length}
           debt={{
             debtor: users.find((u) => u.id === newDebt.debtorId)?.name || "",
-            creditors: creditorIds.map(
-              (c) => users.find((u) => u.id === c)?.name || ""
-            ),
+            creditors: creditorIds.map((c) => {
+              const u = users.find((u) => u.id === c);
+              return {
+                name: u?.name || "",
+                id: u?.id || 0,
+              };
+            }),
             amount: newDebt.amount,
             title: newDebt.title,
             date: newDebt.date,
             creditorsToDebts: undefined,
-            debtorId: undefined,
+            debtorId: newDebt.debtorId,
             id: newDebt.id,
           }}
         />

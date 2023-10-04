@@ -49,6 +49,7 @@ const puppiesByIndexSettleRoutes = new Elysia().get(
           <DebtSettlementList
             settleDebts={settleDebts(unifyDebts(debts))}
             users={users}
+            puppyId={data.id}
           />
         </BaseHtml>
       );

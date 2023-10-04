@@ -26,13 +26,3 @@ export default function PuppySettings({
     </div>
   );
 }
-
-export interface MyDebt {
-  creditorsToDebts: undefined;
-  debtorId: undefined;
-  debtor: string;
-  creditors: string[];
-  id: number;
-  title: string;
-  amount: number;
-}

@@ -5,9 +5,11 @@ import { User } from "../db/schema";
 export default function DebtSettlementList({
   settleDebts,
   users,
+  puppyId,
 }: {
   settleDebts: SingleDebt[];
   users: User[];
+  puppyId: number;
 }) {
   return (
     <section id="debt-settlement-list">
@@ -19,24 +21,62 @@ export default function DebtSettlementList({
           settleDebts?.map((d) => (
             <li class="py-2 px-4 not-last:border-b-2 border-gray-300">
               {/* TOOD: Proper rounding */}
-              {d.creditor} sends {Math.round(d.amount * 100) / 100}€ to{" "}
-              {d.debtor}
+              {d.creditor} sends {d.amount}€ to {d.debtor}
               {users.find((u) => u.name === d.debtor)?.payPalHandle && (
                 <div class="p-2">
                   <a
                     class="inline bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded no-underline"
                     href={`https://paypal.me/${
                       users.find((u) => u.name === d.debtor)?.payPalHandle
-                    }/${Math.round(d.amount * 100) / 100}`}
+                    }/${d.amount}`}
                   >
                     via Paypal
                   </a>
                 </div>
               )}
+              <form
+                hx-confirm="Really mark settled?"
+                hx-post={`/puppies/${puppyId}/debts`}
+                // TODO: Change from just deleting the row item to showing a success message.
+                hx-swap="delete swap:.5s"
+                hx-target="closest li"
+              >
+                <input
+                  type="hidden"
+                  name="debtorId"
+                  value={d.creditorId.toString()}
+                />
+                <input
+                  type="hidden"
+                  name="creditorIds"
+                  value={d.debtorId.toString()}
+                />
+                <input
+                  type="hidden"
+                  name="amount"
+                  value={d.amount?.toString()}
+                />
+                <input
+                  type="hidden"
+                  name="title"
+                  value={`Settlement to ${d.debtor}`}
+                />
+                <input
+                  type="hidden"
+                  name="splitSetting"
+                  value="notBetweenAll"
+                />
+                <button
+                  type="submit"
+                  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Mark settled
+                </button>
+              </form>
             </li>
           ))
         ) : (
-          <li>No expenses to settle.</li>
+          <li>No expenses to settle. 🎉</li>
         )}
       </ul>
     </section>

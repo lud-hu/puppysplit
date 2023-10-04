@@ -3,19 +3,24 @@ export interface SingleDebt {
    * The debtor (Schuldner, leiht geld aus) is the one who owes money.
    */
   debtor: string;
+  debtorId: number;
   debtorPayPalHandle?: string;
   /**
    * The creditor (Gläubiger, verleiht geld) is the one who is owed money.
    */
   creditor: string;
+  creditorId: number;
   /**
    * The amount of money owed.
    */
   amount: number;
 }
 
-export interface Debt extends Omit<SingleDebt, "creditor"> {
-  creditors: string[];
+export interface Debt extends Omit<SingleDebt, "creditor" | "creditorId"> {
+  creditors: {
+    name: string;
+    id: number;
+  }[];
 }
 
 const roundTwoDecimals = (num: number) =>
@@ -33,10 +38,12 @@ const roundTwoDecimals = (num: number) =>
 export const unifyDebts = (debts: Debt[]): SingleDebt[] => {
   return debts.flatMap((debt) =>
     debt.creditors
-      .filter((c) => c !== debt.debtor)
+      .filter((c) => c.name !== debt.debtor)
       .map((creditor) => ({
         debtor: debt.debtor,
-        creditor,
+        debtorId: debt.debtorId,
+        creditor: creditor.name,
+        creditorId: creditor.id,
         amount: roundTwoDecimals(debt.amount / debt.creditors.length),
       }))
   );
@@ -53,6 +60,8 @@ export const unifyDebts = (debts: Debt[]): SingleDebt[] => {
 export function settleDebts(debts: SingleDebt[]): SingleDebt[] {
   // Create a map to track the net balance for each person
   const balanceMap: { [key: string]: number } = {};
+  // Create a map to track the user id for each person
+  const userMap: { [key: string]: number } = {};
 
   // Calculate net balance for each person
   debts.forEach((debt) => {
@@ -65,6 +74,12 @@ export function settleDebts(debts: SingleDebt[]): SingleDebt[] {
     }
     balanceMap[debtor] -= amount;
     balanceMap[creditor] += amount;
+    if (!(debtor in userMap)) {
+      userMap[debtor] = debt.debtorId;
+    }
+    if (!(creditor in userMap)) {
+      userMap[creditor] = debt.creditorId;
+    }
   });
 
   // Create arrays for debtors and creditors
@@ -91,7 +106,13 @@ export function settleDebts(debts: SingleDebt[]): SingleDebt[] {
       const amount = Math.min(-balanceMap[debtor], balanceMap[creditor]);
       balanceMap[debtor] = roundTwoDecimals(balanceMap[debtor] + amount);
       balanceMap[creditor] = roundTwoDecimals(balanceMap[creditor] - amount);
-      transactions.push({ debtor, creditor, amount });
+      transactions.push({
+        debtor,
+        creditor,
+        amount,
+        debtorId: userMap[debtor],
+        creditorId: userMap[creditor],
+      });
       if (balanceMap[creditor] === 0) {
         creditors.shift();
       }

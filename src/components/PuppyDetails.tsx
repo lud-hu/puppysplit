@@ -56,9 +56,12 @@ export default function PuppyDetails({
 
 export interface MyDebt {
   creditorsToDebts: undefined;
-  debtorId: undefined;
+  debtorId: number;
   debtor: string;
-  creditors: string[];
+  creditors: {
+    name: string;
+    id: number;
+  }[];
   id: number;
   title: string;
   amount: number;

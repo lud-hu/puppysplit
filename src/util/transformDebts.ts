@@ -29,9 +29,12 @@ export default (
     debts.map((debt) => ({
       ...debt,
       creditorsToDebts: undefined,
-      debtorId: undefined,
+      debtorId: debt.debtorId,
       debtor: debt.debtor.name,
-      creditors: debt.creditorsToDebts.map((c) => c.user.name),
+      creditors: debt.creditorsToDebts.map((c) => ({
+        name: c.user.name,
+        id: c.user.id,
+      })),
     })) || []
   );
 };
