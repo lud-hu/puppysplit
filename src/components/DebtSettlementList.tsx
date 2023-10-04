@@ -19,21 +19,23 @@ export default function DebtSettlementList({
       <ul class="m-0 p-4 bg-gray-100">
         {settleDebts.length > 0 ? (
           settleDebts?.map((d) => (
-            <li class="py-2 px-4 not-last:border-b-2 border-gray-300">
-              {/* TOOD: Proper rounding */}
-              {d.creditor} sends {d.amount}€ to {d.debtor}
-              {users.find((u) => u.name === d.debtor)?.payPalHandle && (
-                <div class="p-2">
-                  <a
-                    class="inline bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded no-underline"
-                    href={`https://paypal.me/${
-                      users.find((u) => u.name === d.debtor)?.payPalHandle
-                    }/${d.amount}`}
-                  >
-                    via Paypal
-                  </a>
-                </div>
-              )}
+            <li class="flex items-center justify-between py-2 px-4 not-last:border-b-2 border-gray-300">
+              <div>
+                {/* TOOD: Proper rounding */}
+                {d.creditor} sends {d.amount}€ to {d.debtor}
+                {users.find((u) => u.name === d.debtor)?.payPalHandle && (
+                  <div class="p-2">
+                    <a
+                      class="inline bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded no-underline"
+                      href={`https://paypal.me/${
+                        users.find((u) => u.name === d.debtor)?.payPalHandle
+                      }/${d.amount}`}
+                    >
+                      via Paypal
+                    </a>
+                  </div>
+                )}
+              </div>
               <form
                 hx-confirm="Really mark settled?"
                 hx-post={`/puppies/${puppyId}/debts`}
