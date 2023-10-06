@@ -5,7 +5,7 @@ export default function Input({
   placeholder,
   label,
   type = "text",
-  step,
+  isAmountInput,
   name,
   prefix,
   value,
@@ -14,11 +14,24 @@ export default function Input({
   placeholder?: string;
   label?: string;
   type?: string;
-  step?: string;
+  isAmountInput?: boolean;
   name: string;
   prefix?: string;
   value?: string;
 }) {
+  let additionalInputProps: Record<string, string> = {
+    type,
+    name,
+  };
+  if (id) additionalInputProps["id"] = id;
+  if (placeholder) additionalInputProps["placeholder"] = placeholder;
+  if (value) additionalInputProps["value"] = value;
+  if (isAmountInput) {
+    additionalInputProps["step"] = "0.01";
+    additionalInputProps["inputmode"] = "numeric";
+    additionalInputProps["pattern"] = "[0-9]*";
+  }
+
   return (
     <div class="w-full">
       {label && (
@@ -34,23 +47,13 @@ export default function Input({
           {prefix}
           <input
             class="appearance-none bg-gray-200 py-3 leading-tight focus:outline-none focus:bg-white"
-            id={id || ""}
-            type={type}
-            step={step || ""}
-            name={name}
-            placeholder={placeholder || ""}
-            value={value || ""}
+            {...additionalInputProps}
           />
         </span>
       ) : (
         <input
           class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-          id={id || ""}
-          type={type}
-          step={step || ""}
-          name={name}
-          placeholder={placeholder || ""}
-          value={value || ""}
+          {...additionalInputProps}
         />
       )}
     </div>

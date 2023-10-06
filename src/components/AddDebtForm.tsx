@@ -18,7 +18,7 @@ export default function AddDebtForm({
         hx-post={`/puppies/${puppyId}/debts`}
         hx-target="#debt-list"
         hx-swap="afterbegin"
-        hx-on={`htmx:afterRequest: this.reset(); this.amount.focus(); restoreUser(${puppyId}, this.debtorId);`}
+        hx-on={`htmx:afterRequest: this.reset(); restoreUser(${puppyId}, this.debtorId); this.amount.focus();`}
         class="flex flex-col bg-gray-100 p-4 gap-4 text-center"
       >
         <script src="/debtorSelectionPersistor.js" />
@@ -35,9 +35,9 @@ export default function AddDebtForm({
           id="amount"
           name="amount"
           type="number"
-          step="0.01"
           label="paid"
           placeholder="12 €"
+          isAmountInput
         />
         <Input id="title" name="title" label="for" placeholder="Dinge" />
         <fieldset>
