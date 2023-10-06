@@ -31,7 +31,7 @@ export default function DebtSettlementList({
                         users.find((u) => u.name === d.debtor)?.payPalHandle
                       }/${d.amount}`}
                     >
-                      via Paypal
+                      Send via Paypal
                     </a>
                   </div>
                 )}

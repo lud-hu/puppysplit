@@ -39,7 +39,7 @@ export default function PuppyDetails({
           <h2 class="text-2xl mb-3 pl-4 block uppercase tracking-wide text-gray-700 font-bold">
             Settle
           </h2>
-          <div class="p-4 pb-8 bg-gray-100">
+          <div class="p-4 pb-8 bg-gray-100 flex justify-between items-center">
             <p class="mb-2">Finished adding expenses?</p>
             <a
               href={`/puppies/${id}/settle`}

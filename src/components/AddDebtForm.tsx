@@ -35,6 +35,7 @@ export default function AddDebtForm({
           id="amount"
           name="amount"
           type="number"
+          step="0.01"
           label="paid"
           placeholder="12 €"
         />

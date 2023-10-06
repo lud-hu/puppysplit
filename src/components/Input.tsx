@@ -5,6 +5,7 @@ export default function Input({
   placeholder,
   label,
   type = "text",
+  step,
   name,
   prefix,
   value,
@@ -13,21 +14,11 @@ export default function Input({
   placeholder?: string;
   label?: string;
   type?: string;
+  step?: string;
   name: string;
   prefix?: string;
   value?: string;
 }) {
-  console.log("name", name);
-
-  const input = (
-    <input
-      class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-      id={id || ""}
-      type={type}
-      name={name}
-      placeholder={placeholder || ""}
-    />
-  );
   return (
     <div class="w-full">
       {label && (
@@ -45,6 +36,7 @@ export default function Input({
             class="appearance-none bg-gray-200 py-3 leading-tight focus:outline-none focus:bg-white"
             id={id || ""}
             type={type}
+            step={step || ""}
             name={name}
             placeholder={placeholder || ""}
             value={value || ""}
@@ -55,6 +47,7 @@ export default function Input({
           class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
           id={id || ""}
           type={type}
+          step={step || ""}
           name={name}
           placeholder={placeholder || ""}
           value={value || ""}
