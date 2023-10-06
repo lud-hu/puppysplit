@@ -1,6 +1,5 @@
 - look at all TODOs in the code
 - features:
-  - add "mark settled/not yet settled" button for each debt (adding a debt neutralising the debt)
   - split expenses not equally between all selected members but with different shares
   - split expenses not equally between all selected members but with different amounts
   - add expense type "income", so basically just a negative expense. e.g. if someone got the deposit back
