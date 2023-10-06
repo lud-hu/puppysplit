@@ -18,7 +18,7 @@ export default function AddDebtForm({
         hx-post={`/puppies/${puppyId}/debts`}
         hx-target="#debt-list"
         hx-swap="afterbegin"
-        hx-on="htmx:afterRequest: this.reset(); this.amount.focus();"
+        hx-on={`htmx:afterRequest: this.reset(); this.amount.focus(); restoreUser(${puppyId}, this.debtorId);`}
         class="flex flex-col bg-gray-100 p-4 gap-4 text-center"
       >
         <script src="/debtorSelectionPersistor.js" />
