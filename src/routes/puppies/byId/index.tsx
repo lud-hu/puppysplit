@@ -1,4 +1,4 @@
-import { desc } from "drizzle-orm";
+import { desc, eq, inArray } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 import * as elements from "typed-html";
 import BaseHtml from "../../../components/BaseHtml";
@@ -10,6 +10,7 @@ import puppiesByIndexSettingsRoutes from "./settings";
 import puppiesByIndexSettleRoutes from "./settle";
 import puppiesByIndexTitleRoutes from "./title";
 import puppiesByIndexUsersRoutes from "./users";
+import { creditorsToDebts, debts, puppies, users } from "../../../db/schema";
 
 const puppyIndexRoutes = new Elysia()
   .get(
@@ -55,6 +56,39 @@ const puppyIndexRoutes = new Elysia()
           </BaseHtml>
         );
       }
+    },
+    {
+      params: t.Object({
+        id: t.Numeric(),
+      }),
+    }
+  )
+  .delete(
+    "/puppies/:id",
+    async ({ params, set }) => {
+      const puppyUsers = await db.query.users.findMany({
+        where: (users, { eq }) => eq(users.puppyId, params.id),
+        columns: { id: true },
+      });
+      const userIds = puppyUsers.map((u) => u.id);
+
+      try {
+        await db.transaction(async (tx) => {
+          if (userIds.length > 0) {
+            await tx
+              .delete(creditorsToDebts)
+              .where(inArray(creditorsToDebts.userId, userIds));
+            await tx.delete(debts).where(inArray(debts.debtorId, userIds));
+            await tx.delete(users).where(eq(users.puppyId, params.id));
+          }
+          await tx.delete(puppies).where(eq(puppies.id, params.id));
+        });
+      } catch (e) {
+        console.error(e);
+      }
+
+      set.headers["HX-Redirect"] = `/`;
+      return null;
     },
     {
       params: t.Object({

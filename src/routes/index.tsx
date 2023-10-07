@@ -9,7 +9,6 @@ import staticRoutes from "./statics";
 
 const routes = new Elysia()
   .get("/", async ({ html }: any) => {
-    const data = await db.select().from(puppies).all();
     return html(
       <BaseHtml>
         <PuppyLandingPage />
