@@ -10,7 +10,7 @@ export default function PuppyHeader({
   title,
   backLink,
 }: {
-  puppyId?: number;
+  puppyId?: string;
   title: string;
   users?: User[];
   backLink?: string;

@@ -49,7 +49,7 @@ const puppyIndexRoutes = new Elysia()
           <BaseHtml pageTitle={data.title + " - Puppysplit"}>
             <PuppyDetails
               debts={debts}
-              id={data.id}
+              puppyId={data.id}
               title={data.title}
               users={users}
             />
@@ -59,7 +59,7 @@ const puppyIndexRoutes = new Elysia()
     },
     {
       params: t.Object({
-        id: t.Numeric(),
+        id: t.String(),
       }),
     }
   )
@@ -92,7 +92,7 @@ const puppyIndexRoutes = new Elysia()
     },
     {
       params: t.Object({
-        id: t.Numeric(),
+        id: t.String(),
       }),
     }
   )

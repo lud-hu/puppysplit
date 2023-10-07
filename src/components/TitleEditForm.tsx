@@ -5,7 +5,7 @@ export default function TitleEditForm({
   puppyId,
   title,
 }: {
-  puppyId: number;
+  puppyId: string;
   title: string;
 }) {
   return (

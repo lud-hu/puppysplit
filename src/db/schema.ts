@@ -9,7 +9,7 @@ import {
 
 export const puppies = sqliteTable("puppies", {
   // TODO: How to get a nice uuid in sqlite to have a "encrypted" link?
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  id: text("id", { length: 191 }).unique().notNull().primaryKey(),
   title: text("title").notNull(),
 });
 
@@ -19,12 +19,11 @@ export const puppiesRelations = relations(puppies, ({ many, one }) => ({
 }));
 
 export const debts = sqliteTable("debts", {
-  // TODO: How to get a nice uuid in sqlite to have a "encrypted" link?
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   amount: real("amount").notNull(),
   debtorId: integer("debtorId", { mode: "number" }).notNull(),
-  puppyId: integer("puppyId", { mode: "number" }).notNull(),
+  puppyId: text("puppyId").notNull(),
   date: integer("date", { mode: "timestamp" })
     .notNull()
     // TODO: Default not working? :(
@@ -46,7 +45,7 @@ export const debtsRelations = relations(debts, ({ many, one }) => ({
 export const users = sqliteTable("users", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
-  puppyId: integer("puppyId", { mode: "number" }).notNull(),
+  puppyId: text("puppyId").notNull(),
   payPalHandle: text("payPalHandle"),
 });
 

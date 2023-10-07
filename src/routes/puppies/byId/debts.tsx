@@ -61,7 +61,7 @@ const puppiesByIndexDebtsRoutes = new Elysia()
     },
     {
       params: t.Object({
-        id: t.Numeric(),
+        id: t.String(),
       }),
     }
   ) // Add a debt to a puppy
@@ -77,7 +77,7 @@ const puppiesByIndexDebtsRoutes = new Elysia()
     },
     {
       params: t.Object({
-        id: t.Numeric(),
+        id: t.String(),
         debtId: t.Numeric(),
       }),
     }
@@ -171,7 +171,7 @@ const puppiesByIndexDebtsRoutes = new Elysia()
         }),
       }),
       params: t.Object({
-        id: t.Numeric(),
+        id: t.String(),
       }),
       error({ code, error }) {
         switch (code) {

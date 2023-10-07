@@ -7,7 +7,7 @@ export default function UsersListItem({
   puppyId,
 }: {
   user: User;
-  puppyId: number;
+  puppyId: string;
 }) {
   return (
     <li class="py-4 px-4 not-last:border-b-2 border-gray-300 flex justify-between">

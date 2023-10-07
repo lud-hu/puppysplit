@@ -7,7 +7,11 @@ const routes = new Elysia()
   .post(
     "/puppies",
     async ({ body, set }) => {
-      const newPuppy = await db.insert(puppies).values(body).returning().get();
+      const newPuppy = await db
+        .insert(puppies)
+        .values({ ...body, id: crypto.randomUUID() })
+        .returning()
+        .get();
       set.headers["HX-Redirect"] = `/puppies/${newPuppy.id}/settings`;
       return null;
     },

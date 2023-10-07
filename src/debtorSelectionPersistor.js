@@ -16,7 +16,7 @@ htmx.defineExtension("debtorSelectionPersistor", {
 
 /**
  * Restore user if present in local storage.
- * @param {*} puppyId The id of the puppy to restore the user for.
+ * @param {string} puppyId The id of the puppy to restore the user for.
  * @param {*} target The select element to restore the user into.
  */
 function restoreUser(puppyId, target) {

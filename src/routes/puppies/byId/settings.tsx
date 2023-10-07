@@ -22,14 +22,14 @@ const puppiesByIndexSettingsRoutes = new Elysia().get(
     if (data) {
       return (
         <BaseHtml pageTitle={data.title + " - Einstellungen - Puppysplit"}>
-          <PuppySettings id={data.id} title={data.title} users={users} />
+          <PuppySettings puppyId={data.id} title={data.title} users={users} />
         </BaseHtml>
       );
     }
   },
   {
     params: t.Object({
-      id: t.Numeric(),
+      id: t.String(),
     }),
   }
 );

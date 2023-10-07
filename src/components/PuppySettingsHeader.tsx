@@ -10,7 +10,7 @@ export default function PuppySettingsHeader({
   title,
   backLink,
 }: {
-  puppyId?: number;
+  puppyId?: string;
   title: string;
   users?: User[];
   backLink: string;

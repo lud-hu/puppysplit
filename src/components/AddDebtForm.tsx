@@ -7,7 +7,7 @@ export default function AddDebtForm({
   puppyId,
 }: {
   users: User[];
-  puppyId: number;
+  puppyId: string;
 }) {
   return (
     <section>
@@ -18,7 +18,7 @@ export default function AddDebtForm({
         hx-post={`/puppies/${puppyId}/debts`}
         hx-target="#debt-list"
         hx-swap="afterbegin"
-        hx-on={`htmx:afterRequest: this.reset(); restoreUser(${puppyId}, this.debtorId); this.amount.focus();`}
+        hx-on={`htmx:afterRequest: this.reset(); restoreUser('${puppyId}', this.debtorId); this.amount.focus();`}
         class="flex flex-col bg-gray-100 p-4 gap-4 text-center"
       >
         <script src="/debtorSelectionPersistor.js" />

@@ -8,20 +8,20 @@ export default (
     amount: number;
     debtorId: number;
     date: Date;
-    puppyId: number;
+    puppyId: string;
     creditorsToDebts: {
       userId: number;
       debtId: number;
       user: {
         id: number;
         name: string;
-        puppyId: number;
+        puppyId: string;
       };
     }[];
     debtor: {
       id: number;
       name: string;
-      puppyId: number;
+      puppyId: string;
     };
   }[]
 ): MyDebt[] => {

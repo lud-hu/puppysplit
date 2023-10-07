@@ -5,29 +5,29 @@ import DebtList from "./DebtList";
 import PuppyHeader from "./PuppyHeader";
 
 export default function PuppyDetails({
-  id,
+  puppyId,
   title,
   debts,
   users,
 }: {
   debts: MyDebt[];
-  id: number;
+  puppyId: string;
   title: string;
   users: User[];
 }) {
   return (
     <div class="flex flex-col gap-3">
-      <PuppyHeader puppyId={id} title={title} users={users} />
+      <PuppyHeader puppyId={puppyId} title={title} users={users} />
       <main class="flex flex-col gap-10">
-        <AddDebtForm users={users} puppyId={id} />
+        <AddDebtForm users={users} puppyId={puppyId} />
         <DebtList
           debts={debts.slice(0, 5)}
           users={users}
-          puppyId={id}
+          puppyId={puppyId}
           additionalListItem={
             <li class="py-2 px-4 text-center">
               <a
-                href={`/puppies/${id}/debts`}
+                href={`/puppies/${puppyId}/debts`}
                 class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded no-underline"
               >
                 Show All
@@ -42,7 +42,7 @@ export default function PuppyDetails({
           <div class="p-4 pb-8 bg-gray-100 flex justify-between items-center">
             <p class="mb-2">Finished adding expenses?</p>
             <a
-              href={`/puppies/${id}/settle`}
+              href={`/puppies/${puppyId}/settle`}
               class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded no-underline"
             >
               Settle Now

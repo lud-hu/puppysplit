@@ -9,7 +9,7 @@ export default function DebtListEntry({
 }: {
   debt: MyDebt;
   puppyUserCount: number;
-  puppyId: number;
+  puppyId: string;
 }) {
   return (
     <li class="py-2 px-4 not-last:border-b-2 border-gray-300 flex justify-between">

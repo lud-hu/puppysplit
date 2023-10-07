@@ -12,7 +12,7 @@ export default function DebtList({
 }: {
   debts: MyDebt[];
   users: User[];
-  puppyId: number;
+  puppyId: string;
   title?: string;
   additionalListItem?: string;
 }) {

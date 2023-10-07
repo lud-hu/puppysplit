@@ -1,11 +1,12 @@
 import { db } from "../index";
 import { creditorsToDebts, debts, puppies, users } from "../schema";
 
+const PUPPY_ID = "41e09908-ae42-4136-b0a9-ab8eb96fa9bb";
 await db
   .insert(puppies)
   .values([
     {
-      id: 1,
+      id: PUPPY_ID,
       title: "Test Puppy",
     },
   ])
@@ -17,12 +18,12 @@ await db
   .values([
     {
       name: "Alice",
-      puppyId: 1,
+      puppyId: PUPPY_ID,
       id: 1,
     },
     {
       name: "Bob",
-      puppyId: 1,
+      puppyId: PUPPY_ID,
       id: 2,
     },
   ])
@@ -36,7 +37,7 @@ await db
       id: 1,
       amount: 12,
       debtorId: 1,
-      puppyId: 1,
+      puppyId: PUPPY_ID,
       title: "Beer",
       date: new Date(),
     },

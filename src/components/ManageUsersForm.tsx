@@ -7,7 +7,7 @@ export default function ManageUsersForm({
   puppyId,
   users,
 }: {
-  puppyId: number;
+  puppyId: string;
   users: User[];
 }) {
   return (

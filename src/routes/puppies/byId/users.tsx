@@ -27,7 +27,7 @@ const puppiesByIndexUsersRoutes = new Elysia()
         payPalHandle: t.Optional(t.String()),
       }),
       params: t.Object({
-        id: t.Numeric(),
+        id: t.String(),
       }),
     }
   )
@@ -46,7 +46,7 @@ const puppiesByIndexUsersRoutes = new Elysia()
     },
     {
       params: t.Object({
-        id: t.Numeric(),
+        id: t.String(),
         userId: t.Numeric(),
       }),
     }

@@ -24,7 +24,7 @@ const puppiesByIndexTitleRoutes = new Elysia()
     },
     {
       params: t.Object({
-        id: t.Numeric(),
+        id: t.String(),
       }),
     }
   )
@@ -49,7 +49,7 @@ const puppiesByIndexTitleRoutes = new Elysia()
         title: t.String({ minLength: 1 }),
       }),
       params: t.Object({
-        id: t.Numeric(),
+        id: t.String(),
       }),
     }
   )
@@ -74,7 +74,7 @@ const puppiesByIndexTitleRoutes = new Elysia()
     },
     {
       params: t.Object({
-        id: t.Numeric(),
+        id: t.String(),
       }),
     }
   );

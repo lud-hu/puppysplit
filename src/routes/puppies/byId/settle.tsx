@@ -57,7 +57,7 @@ const puppiesByIndexSettleRoutes = new Elysia().get(
   },
   {
     params: t.Object({
-      id: t.Numeric(),
+      id: t.String(),
     }),
   }
 );

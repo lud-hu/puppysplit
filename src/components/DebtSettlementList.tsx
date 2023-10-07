@@ -9,7 +9,7 @@ export default function DebtSettlementList({
 }: {
   settleDebts: SingleDebt[];
   users: User[];
-  puppyId: number;
+  puppyId: string;
 }) {
   return (
     <section id="debt-settlement-list">
