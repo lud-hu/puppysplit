@@ -109,7 +109,7 @@ export function settleDebts(debts: SingleDebt[]): SingleDebt[] {
       transactions.push({
         debtor,
         creditor,
-        amount,
+        amount: roundTwoDecimals(amount),
         debtorId: userMap[debtor],
         creditorId: userMap[creditor],
       });
