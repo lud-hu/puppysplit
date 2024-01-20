@@ -1,34 +1,10 @@
-# THE BETH STACK
+# Puppysplit 🐶
 
-_It may not be the BEST stack, but it is the BETH stack._
+Puppysplit is an app that allows you to easily split costs in a group of people e.g. when being on a weekend skiing trip or climbing holiday.
+It originated in a test project for a web stack based on HTMX. It still a proof of concept so the code may not be as nice as it could get and it's pretty simple in functionality for now.
 
-## [Bun](https://bun.sh/)
-
-## [Elysia](https://elysiajs.com/)
-
-## [Turso](https://turso.tech/)
-
-## [HTMX](https://htmx.org/)
-
-Also: [typed-html](https://github.com/nicojs/typed-html), [tailwind-css](https://tailwindcss.com/), [drizzle](https://orm.drizzle.team/), [hyperscript](https://hyperscript.org/) and [fly.io](https://fly.io/)
-
-### ADDITIONAL STYLING OPTIONS:
-
-#### [twind](https://twind.dev/): check out the [twind branch](https://github.com/ethanniser/the-beth-stack/tree/twind)
-
-#### [unocss](https://unocss.dev/): check out the [unocss branch](https://github.com/ethanniser/the-beth-stack/tree/unocss)
-
-_really you can use whatever you like the most_
-
-### ADDITIONAL STYLING OPTIONS:
-
-#### File-based Routing: check out the [elysia-autoroutes branch](https://github.com/ethanniser/the-beth-stack/tree/file-based-routing)
-
-### VIEW THE LIVE DEMO AT [the-beth-stack.fly.dev](https://the-beth-stack.fly.dev/)
-
-## EACH STEP IN THE TUTORIAL IS [A BRANCH IN THIS REPO](https://github.com/ethanniser/the-beth-stack/branches)
-
-### SO YOU CAN SEE THE CODE AT EACH STEP
+This repo is based on the BETH stack:
+https://github.com/ethanniser/the-beth-stack
 
 # TO RUN LOCALLY
 
