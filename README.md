@@ -6,6 +6,10 @@ It originated in a test project for a web stack based on HTMX. It still a proof 
 This repo is based on the BETH stack:
 https://github.com/ethanniser/the-beth-stack
 
+Technologies used:
+Bun, Elysia, Turso, HTMX
+Also: tailwind, drizzle, hyperscript and fly.io
+
 # TO RUN LOCALLY
 
 1. Clone this repo
