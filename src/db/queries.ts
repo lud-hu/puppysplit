@@ -1,41 +1,41 @@
 import { desc, eq, inArray } from "drizzle-orm";
 import { db } from ".";
-import { creditorsToDebts, debts, puppies, users } from "./schema";
-import type { Debt, User } from "./schema";
-import type { MyDebt } from "../types";
+import { expenseParticipants, expenses, puppies, users } from "./schema";
+import type { ExpenseRow, User } from "./schema";
+import type { Expense } from "../types";
 
-type DebtWithRelations = Debt & {
-  debtor: User;
-  creditorsToDebts: { userId: number; debtId: number; user: User }[];
+type ExpenseWithRelations = ExpenseRow & {
+  payer: User;
+  participants: { userId: number; expenseId: number; user: User }[];
 };
 
-export function toMyDebt(debt: DebtWithRelations): MyDebt {
+export function toExpense(expense: ExpenseWithRelations): Expense {
   return {
-    id: debt.id,
-    title: debt.title,
-    amount: debt.amount,
-    date: debt.date,
-    debtorId: debt.debtorId,
-    debtor: debt.debtor.name,
-    creditors: debt.creditorsToDebts.map((c) => ({
-      name: c.user.name,
-      id: c.user.id,
+    id: expense.id,
+    title: expense.title,
+    amount: expense.amount,
+    date: expense.date,
+    payerId: expense.payerId,
+    payer: expense.payer.name,
+    participants: expense.participants.map((p) => ({
+      name: p.user.name,
+      id: p.user.id,
     })),
   };
 }
 
 /**
- * Loads a puppy with all its debts (newest first), flattened for rendering.
+ * Loads a puppy with all its expenses (newest first), flattened for rendering.
  */
-export async function getPuppyWithDebts(puppyId: string) {
+export async function getPuppyWithExpenses(puppyId: string) {
   const puppy = await db.query.puppies.findFirst({
     where: (puppies, { eq }) => eq(puppies.id, puppyId),
     with: {
-      debts: {
-        orderBy: (debts) => [desc(debts.date)],
+      expenses: {
+        orderBy: (expenses) => [desc(expenses.date)],
         with: {
-          debtor: true,
-          creditorsToDebts: {
+          payer: true,
+          participants: {
             with: {
               user: true,
             },
@@ -50,7 +50,7 @@ export async function getPuppyWithDebts(puppyId: string) {
   return {
     id: puppy.id,
     title: puppy.title,
-    debts: puppy.debts.map(toMyDebt),
+    expenses: puppy.expenses.map(toExpense),
   };
 }
 
@@ -68,19 +68,19 @@ export function createPuppy(title: string) {
     .get();
 }
 
-export async function createDebt(input: {
+export async function createExpense(input: {
   puppyId: string;
   title: string;
   amount: number;
-  debtorId: number;
-  creditorIds: number[];
-}): Promise<Debt> {
+  payerId: number;
+  participantIds: number[];
+}): Promise<ExpenseRow> {
   return db.transaction(async (tx) => {
-    const newDebt = await tx
-      .insert(debts)
+    const newExpense = await tx
+      .insert(expenses)
       .values({
         amount: input.amount,
-        debtorId: input.debtorId,
+        payerId: input.payerId,
         puppyId: input.puppyId,
         title: input.title,
         date: new Date(),
@@ -88,21 +88,23 @@ export async function createDebt(input: {
       .returning()
       .get();
 
-    await tx.insert(creditorsToDebts).values(
-      input.creditorIds.map((userId) => ({
-        debtId: newDebt.id,
+    await tx.insert(expenseParticipants).values(
+      input.participantIds.map((userId) => ({
+        expenseId: newExpense.id,
         userId,
       }))
     );
 
-    return newDebt;
+    return newExpense;
   });
 }
 
-export async function deleteDebt(debtId: number) {
+export async function deleteExpense(expenseId: number) {
   await db.transaction(async (tx) => {
-    await tx.delete(creditorsToDebts).where(eq(creditorsToDebts.debtId, debtId));
-    await tx.delete(debts).where(eq(debts.id, debtId));
+    await tx
+      .delete(expenseParticipants)
+      .where(eq(expenseParticipants.expenseId, expenseId));
+    await tx.delete(expenses).where(eq(expenses.id, expenseId));
   });
 }
 
@@ -123,12 +125,14 @@ export function createUser(input: {
 }
 
 /**
- * Removes a user from a puppy. Debts they paid stay; only their
- * shares in other debts are removed.
+ * Removes a user from a puppy. Expenses they paid stay; only their
+ * shares in other expenses are removed.
  */
 export async function deleteUser(userId: number) {
   await db.transaction(async (tx) => {
-    await tx.delete(creditorsToDebts).where(eq(creditorsToDebts.userId, userId));
+    await tx
+      .delete(expenseParticipants)
+      .where(eq(expenseParticipants.userId, userId));
     await tx.delete(users).where(eq(users.id, userId));
   });
 }
@@ -144,7 +148,7 @@ export function getPuppy(puppyId: string) {
 }
 
 /**
- * Deletes a puppy together with its users, debts and debt shares.
+ * Deletes a puppy together with its users, expenses and expense shares.
  */
 export async function deletePuppyCascade(puppyId: string) {
   const puppyUsers = await getPuppyUsers(puppyId);
@@ -153,9 +157,9 @@ export async function deletePuppyCascade(puppyId: string) {
   await db.transaction(async (tx) => {
     if (userIds.length > 0) {
       await tx
-        .delete(creditorsToDebts)
-        .where(inArray(creditorsToDebts.userId, userIds));
-      await tx.delete(debts).where(inArray(debts.debtorId, userIds));
+        .delete(expenseParticipants)
+        .where(inArray(expenseParticipants.userId, userIds));
+      await tx.delete(expenses).where(inArray(expenses.payerId, userIds));
       await tx.delete(users).where(eq(users.puppyId, puppyId));
     }
     await tx.delete(puppies).where(eq(puppies.id, puppyId));

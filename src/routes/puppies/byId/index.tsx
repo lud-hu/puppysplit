@@ -4,19 +4,19 @@ import PuppyDetails from "../../../components/PuppyDetails";
 import {
   deletePuppyCascade,
   getPuppyUsers,
-  getPuppyWithDebts,
+  getPuppyWithExpenses,
 } from "../../../db/queries";
-import puppiesByIndexDebtsRoutes from "./debts";
-import puppiesByIndexSettingsRoutes from "./settings";
-import puppiesByIndexSettleRoutes from "./settle";
-import puppiesByIndexTitleRoutes from "./title";
-import puppiesByIndexUsersRoutes from "./users";
+import puppyExpensesRoutes from "./expenses";
+import puppySettingsRoutes from "./settings";
+import puppySettleRoutes from "./settle";
+import puppyTitleRoutes from "./title";
+import puppyUsersRoutes from "./users";
 
 const puppyIndexRoutes = new Elysia()
   .get(
     "/puppies/:id",
     async ({ params }) => {
-      const puppy = await getPuppyWithDebts(params.id);
+      const puppy = await getPuppyWithExpenses(params.id);
 
       if (!puppy) {
         return <div>Not found</div>;
@@ -27,7 +27,7 @@ const puppyIndexRoutes = new Elysia()
       return (
         <BaseHtml pageTitle={puppy.title + " - Puppysplit"}>
           <PuppyDetails
-            debts={puppy.debts}
+            expenses={puppy.expenses}
             puppyId={puppy.id}
             title={puppy.title}
             users={users}
@@ -59,10 +59,10 @@ const puppyIndexRoutes = new Elysia()
       }),
     }
   )
-  .use(puppiesByIndexDebtsRoutes)
-  .use(puppiesByIndexSettleRoutes)
-  .use(puppiesByIndexTitleRoutes)
-  .use(puppiesByIndexUsersRoutes)
-  .use(puppiesByIndexSettingsRoutes);
+  .use(puppyExpensesRoutes)
+  .use(puppySettleRoutes)
+  .use(puppyTitleRoutes)
+  .use(puppyUsersRoutes)
+  .use(puppySettingsRoutes);
 
 export default puppyIndexRoutes;

@@ -1,7 +1,7 @@
 import { User } from "../db/schema";
 import Input from "./Input";
 
-export default function AddDebtForm({
+export default function AddExpenseForm({
   users,
   puppyId,
 }: {
@@ -14,18 +14,18 @@ export default function AddDebtForm({
         Add expense
       </h2>
       <form
-        hx-post={`/puppies/${puppyId}/debts`}
-        hx-target="#debt-list"
+        hx-post={`/puppies/${puppyId}/expenses`}
+        hx-target="#expense-list"
         hx-swap="afterbegin"
-        hx-on={`htmx:afterRequest: this.reset(); restoreUser('${puppyId}', this.debtorId); this.querySelector('#amount').focus();`}
+        hx-on={`htmx:afterRequest: this.reset(); restoreUser('${puppyId}', this.payerId); this.querySelector('#amount').focus();`}
         class="flex flex-col bg-gray-100 p-4 gap-4 text-center"
       >
-        <script src="/debtorSelectionPersistor.js" />
+        <script src="/payerSelectionPersistor.js" />
         <select
-          name="debtorId"
+          name="payerId"
           class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight text-center focus:outline-hidden focus:bg-white"
           style="text-align-last: center"
-          hx-ext="debtorSelectionPersistor"
+          hx-ext="payerSelectionPersistor"
         >
           {users?.map((u) => (
             <option value={u.id.toString()} safe>
@@ -62,11 +62,11 @@ export default function AddDebtForm({
                 <div>
                   <input
                     type="checkbox"
-                    name="creditorIds"
+                    name="participantIds"
                     value={u.id.toString()}
-                    id={"userCheckbox" + u.name}
+                    id={"userCheckbox" + u.id}
                   />
-                  <label for={"userCheckbox" + u.name} safe>
+                  <label for={"userCheckbox" + u.id} safe>
                     {u.name}
                   </label>
                 </div>

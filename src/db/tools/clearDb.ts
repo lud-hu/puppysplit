@@ -1,7 +1,7 @@
 import { db } from "../index";
-import { creditorsToDebts, debts, puppies, users } from "../schema";
+import { expenseParticipants, expenses, puppies, users } from "../schema";
 
-await db.delete(creditorsToDebts).run();
-await db.delete(debts).run();
+await db.delete(expenseParticipants).run();
+await db.delete(expenses).run();
 await db.delete(users).run();
 await db.delete(puppies).run();

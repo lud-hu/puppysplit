@@ -20,7 +20,7 @@ Also: tailwind, drizzle, hyperscript and fly.io
 
 4. Create a database with [Turso](https://turso.tech) and add the connection url and token to a `.env` file in the root of this project
 
-5. Run `bun run db:push` to push the database schema to your database
+5. Run `bun run db:migrate` to apply the database schema (also migrates databases from the old `debts` naming)
 
 6. Run `bun run dev` to start the dev server
 

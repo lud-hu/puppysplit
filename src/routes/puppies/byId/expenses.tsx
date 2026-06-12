@@ -1,20 +1,20 @@
 import { Elysia, t } from "elysia";
 import BaseHtml from "../../../components/BaseHtml";
-import DebtList from "../../../components/DebtList";
-import DebtListEntry from "../../../components/DebtListEntry";
+import ExpenseList from "../../../components/ExpenseList";
+import ExpenseListItem from "../../../components/ExpenseListItem";
 import PuppyHeader from "../../../components/PuppyHeader";
 import {
-  createDebt,
-  deleteDebt,
+  createExpense,
+  deleteExpense,
   getPuppyUsers,
-  getPuppyWithDebts,
+  getPuppyWithExpenses,
 } from "../../../db/queries";
 
-const puppiesByIndexDebtsRoutes = new Elysia()
+const puppyExpensesRoutes = new Elysia()
   .get(
-    "/puppies/:id/debts",
+    "/puppies/:id/expenses",
     async ({ params }) => {
-      const puppy = await getPuppyWithDebts(params.id);
+      const puppy = await getPuppyWithExpenses(params.id);
 
       if (!puppy) {
         return <div>Not found</div>;
@@ -30,8 +30,8 @@ const puppiesByIndexDebtsRoutes = new Elysia()
             users={users}
             backLink={`/puppies/${puppy.id}`}
           />
-          <DebtList
-            debts={puppy.debts}
+          <ExpenseList
+            expenses={puppy.expenses}
             users={users}
             puppyId={puppy.id}
             title="All Expenses"
@@ -46,21 +46,21 @@ const puppiesByIndexDebtsRoutes = new Elysia()
     }
   )
   .delete(
-    "/puppies/:id/debts/:debtId",
+    "/puppies/:id/expenses/:expenseId",
     async ({ params }) => {
-      await deleteDebt(params.debtId);
+      await deleteExpense(params.expenseId);
       return null;
     },
     {
       params: t.Object({
         id: t.String(),
-        debtId: t.Numeric(),
+        expenseId: t.Numeric(),
       }),
     }
   )
-  // Add a debt to a puppy
+  // Add an expense to a puppy
   .post(
-    "/puppies/:id/debts",
+    "/puppies/:id/expenses",
     async ({ body, params }) => {
       const parsedAmount = parseFloat(body.amount);
       if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
@@ -69,58 +69,58 @@ const puppiesByIndexDebtsRoutes = new Elysia()
 
       const users = await getPuppyUsers(params.id);
 
-      const getCreditorIds = () => {
-        const creditorIds = body.creditorIds;
+      const getParticipantIds = () => {
+        const participantIds = body.participantIds;
         if (body.splitSetting === "betweenAll") {
-          // If "betweenAll" is set we want to split the debt between all users
+          // Split the expense between all users
           return users.map((u) => u.id);
-        } else if (creditorIds) {
-          if (Array.isArray(creditorIds) && creditorIds?.length > 0) {
-            // If an array of creditorIds is set, we want to split the debt between the selected users
+        } else if (participantIds) {
+          if (Array.isArray(participantIds) && participantIds?.length > 0) {
+            // Split the expense between the selected users
             return users
-              .filter((u) => creditorIds.includes(u.id.toString()))
+              .filter((u) => participantIds.includes(u.id.toString()))
               .map((u) => u.id);
           } else {
-            // If a single creditorId is set, we want to split the debt only for the selected user
+            // A single participant was selected
             return users
-              .filter((u) => creditorIds === u.id.toString())
+              .filter((u) => participantIds === u.id.toString())
               .map((u) => u.id);
           }
         }
 
         throw new Error(
-          'Either splitSetting="betweenAll" or creditorIds must be set'
+          'Either splitSetting="betweenAll" or participantIds must be set'
         );
       };
 
-      const creditorIds = getCreditorIds();
+      const participantIds = getParticipantIds();
 
-      const newDebt = await createDebt({
+      const newExpense = await createExpense({
         amount: parsedAmount,
-        debtorId: parseInt(body.debtorId),
+        payerId: parseInt(body.payerId),
         puppyId: params.id,
         title: body.title,
-        creditorIds,
+        participantIds,
       });
 
       return (
-        <DebtListEntry
+        <ExpenseListItem
           puppyId={params.id}
           puppyUserCount={users.length}
-          debt={{
-            debtor: users.find((u) => u.id === newDebt.debtorId)?.name || "",
-            creditors: creditorIds.map((c) => {
-              const u = users.find((u) => u.id === c);
+          expense={{
+            payer: users.find((u) => u.id === newExpense.payerId)?.name || "",
+            participants: participantIds.map((id) => {
+              const u = users.find((u) => u.id === id);
               return {
                 name: u?.name || "",
                 id: u?.id || 0,
               };
             }),
-            amount: newDebt.amount,
-            title: newDebt.title,
-            date: newDebt.date,
-            debtorId: newDebt.debtorId,
-            id: newDebt.id,
+            amount: newExpense.amount,
+            title: newExpense.title,
+            date: newExpense.date,
+            payerId: newExpense.payerId,
+            id: newExpense.id,
           }}
         />
       );
@@ -130,8 +130,8 @@ const puppiesByIndexDebtsRoutes = new Elysia()
         title: t.String({ minLength: 2 }),
         // TODO: How to accept number here directly?
         amount: t.String(),
-        debtorId: t.String(),
-        creditorIds: t.Optional(
+        payerId: t.String(),
+        participantIds: t.Optional(
           t.Union([t.Array(t.String(), { minLength: 1 }), t.String()])
         ),
         splitSetting: t.String({
@@ -144,4 +144,4 @@ const puppiesByIndexDebtsRoutes = new Elysia()
     }
   );
 
-export default puppiesByIndexDebtsRoutes;
+export default puppyExpensesRoutes;

@@ -1,16 +1,16 @@
 import { User } from "../db/schema";
-import { MyDebt } from "../types";
-import AddDebtForm from "./AddDebtForm";
-import DebtList from "./DebtList";
+import { Expense } from "../types";
+import AddExpenseForm from "./AddExpenseForm";
+import ExpenseList from "./ExpenseList";
 import PuppyHeader from "./PuppyHeader";
 
 export default function PuppyDetails({
   puppyId,
   title,
-  debts,
+  expenses,
   users,
 }: {
-  debts: MyDebt[];
+  expenses: Expense[];
   puppyId: string;
   title: string;
   users: User[];
@@ -19,17 +19,21 @@ export default function PuppyDetails({
     <div class="flex flex-col gap-3">
       <PuppyHeader puppyId={puppyId} title={title} users={users} />
       <main class="flex flex-col gap-10">
-        <AddDebtForm users={users} puppyId={puppyId} />
-        <DebtList debts={debts.slice(0, 5)} users={users} puppyId={puppyId}>
+        <AddExpenseForm users={users} puppyId={puppyId} />
+        <ExpenseList
+          expenses={expenses.slice(0, 5)}
+          users={users}
+          puppyId={puppyId}
+        >
           <li class="py-2 px-4 text-center">
             <a
-              href={`/puppies/${puppyId}/debts`}
+              href={`/puppies/${puppyId}/expenses`}
               class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded no-underline"
             >
               Show All
             </a>
           </li>
-        </DebtList>
+        </ExpenseList>
         <section>
           <h2 class="text-2xl mb-3 pl-4 block uppercase tracking-wide text-gray-700 font-bold">
             Settle

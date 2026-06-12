@@ -3,7 +3,8 @@
   "module": "src/index.tsx",
   "type": "module",
   "scripts": {
-    "db:push": "bunx drizzle-kit push:sqlite",
+    "db:generate": "bunx drizzle-kit generate",
+    "db:migrate": "bun run ./src/db/tools/migrateDb.ts",
     "db:studio": "bunx drizzle-kit studio",
     "db:clear": "bun run ./src/db/tools/clearDb.ts",
     "db:seed": "bun run ./src/db/tools/seedDb.ts",

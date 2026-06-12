@@ -1,16 +1,16 @@
 import type { Children } from "@kitajs/html";
 import { User } from "../db/schema";
-import { MyDebt } from "../types";
-import DebtListEntry from "./DebtListEntry";
+import { Expense } from "../types";
+import ExpenseListItem from "./ExpenseListItem";
 
-export default function DebtList({
-  debts,
+export default function ExpenseList({
+  expenses,
   users,
   puppyId,
   title = "Expenses",
   children,
 }: {
-  debts: MyDebt[];
+  expenses: Expense[];
   users: User[];
   puppyId: string;
   title?: string;
@@ -24,10 +24,10 @@ export default function DebtList({
       >
         {title}
       </h2>
-      <ul class="m-0 p-4 bg-gray-100" id="debt-list">
-        {debts?.map((d) => (
-          <DebtListEntry
-            debt={d}
+      <ul class="m-0 p-4 bg-gray-100" id="expense-list">
+        {expenses?.map((expense) => (
+          <ExpenseListItem
+            expense={expense}
             puppyUserCount={users.length}
             puppyId={puppyId}
           />
