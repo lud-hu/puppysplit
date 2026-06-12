@@ -1,6 +1,7 @@
 import { Html } from "@kitajs/html";
 import { User } from "../db/schema";
 import { Transfer } from "../types";
+import { Button, LinkButton, SectionHeading } from "./ui";
 
 export default function SettlementList({
   transfers,
@@ -13,9 +14,7 @@ export default function SettlementList({
 }) {
   return (
     <section id="settlement-list">
-      <h2 class="text-2xl mb-3 pl-4 block uppercase tracking-wide text-gray-700 font-bold">
-        Settle Debts
-      </h2>
+      <SectionHeading>Settle Debts</SectionHeading>
       <ul class="m-0 p-4 bg-gray-100">
         {transfers.length > 0 ? (
           transfers.map((transfer) => {
@@ -29,12 +28,12 @@ export default function SettlementList({
                   {Html.escapeHtml(transfer.to)}
                   {payPalHandle ? (
                     <div class="p-2">
-                      <a
-                        class="inline bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded no-underline"
+                      <LinkButton
+                        color="gray"
                         href={`https://paypal.me/${payPalHandle}/${transfer.amount}`}
                       >
                         Send via Paypal
-                      </a>
+                      </LinkButton>
                     </div>
                   ) : null}
                 </div>
@@ -70,12 +69,7 @@ export default function SettlementList({
                     name="splitSetting"
                     value="notBetweenAll"
                   />
-                  <button
-                    type="submit"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  >
-                    Mark settled
-                  </button>
+                  <Button type="submit">Mark settled</Button>
                 </form>
               </li>
             );

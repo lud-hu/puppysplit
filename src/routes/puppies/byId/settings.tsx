@@ -1,15 +1,17 @@
 import { Elysia, t } from "elysia";
 import BaseHtml from "../../../components/BaseHtml";
+import NotFoundPage from "../../../components/NotFoundPage";
 import PuppySettings from "../../../components/PuppySettings";
 import { getPuppy, getPuppyUsers } from "../../../db/queries";
 
-const puppiesByIndexSettingsRoutes = new Elysia().get(
+const puppySettingsRoutes = new Elysia().get(
   "/puppies/:id/settings",
-  async ({ params }) => {
+  async ({ params, set }) => {
     const puppy = await getPuppy(params.id);
 
     if (!puppy) {
-      return <div>Not found</div>;
+      set.status = 404;
+      return <NotFoundPage />;
     }
 
     const users = await getPuppyUsers(params.id);
@@ -27,4 +29,4 @@ const puppiesByIndexSettingsRoutes = new Elysia().get(
   }
 );
 
-export default puppiesByIndexSettingsRoutes;
+export default puppySettingsRoutes;

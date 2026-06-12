@@ -1,7 +1,9 @@
 import type { Children } from "@kitajs/html";
+import { Html } from "@kitajs/html";
 import { User } from "../db/schema";
 import { Expense } from "../types";
 import ExpenseListItem from "./ExpenseListItem";
+import { SectionHeading } from "./ui";
 
 export default function ExpenseList({
   expenses,
@@ -18,12 +20,7 @@ export default function ExpenseList({
 }) {
   return (
     <section>
-      <h2
-        safe
-        class="text-2xl mb-3 pl-4 block uppercase tracking-wide text-gray-700 font-bold"
-      >
-        {title}
-      </h2>
+      <SectionHeading>{Html.escapeHtml(title)}</SectionHeading>
       <ul class="m-0 p-4 bg-gray-100" id="expense-list">
         {expenses?.map((expense) => (
           <ExpenseListItem

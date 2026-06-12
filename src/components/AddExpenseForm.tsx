@@ -1,5 +1,6 @@
 import { User } from "../db/schema";
 import Input from "./Input";
+import { Button, SectionHeading } from "./ui";
 
 export default function AddExpenseForm({
   users,
@@ -10,9 +11,7 @@ export default function AddExpenseForm({
 }) {
   return (
     <section>
-      <h2 class="text-2xl mb-3 pl-4 block uppercase tracking-wide text-gray-700 font-bold">
-        Add expense
-      </h2>
+      <SectionHeading>Add expense</SectionHeading>
       <form
         hx-post={`/puppies/${puppyId}/expenses`}
         hx-target="#expense-list"
@@ -74,12 +73,7 @@ export default function AddExpenseForm({
             </div>
           </div>
         </fieldset>
-        <button
-          type="submit"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Add
-        </button>
+        <Button type="submit">Add</Button>
       </form>
     </section>
   );

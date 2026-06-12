@@ -1,4 +1,5 @@
 import Input from "./Input";
+import { Button } from "./ui";
 
 export default function TitleEditForm({
   puppyId,
@@ -15,20 +16,14 @@ export default function TitleEditForm({
       class="flex flex-col gap-4"
     >
       <Input label="Title" placeholder="Titel" name="title" value={title} />
-      {/* Reverse direct so that enter will hit "first" button: Save */}
+      {/* Reverse direction so that enter will hit the "first" button: Save */}
       <div class="flex flex-row-reverse gap-2">
-        <button
-          type="submit"
-          class="w-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
+        <Button type="submit" class="w-1/2">
           Save
-        </button>
-        <button
-          hx-get={`/puppies/${puppyId}/title`}
-          class="w-1/2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-        >
+        </Button>
+        <Button color="gray" class="w-1/2" hx-get={`/puppies/${puppyId}/title`}>
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );

@@ -1,19 +1,15 @@
 import { Elysia } from "elysia";
 import BaseHtml from "../components/BaseHtml";
 import PuppyLandingPage from "../components/PuppyLandingPage";
-import { db } from "../db";
-import { puppies } from "../db/schema";
 import puppiesRoutes from "./puppies";
 import staticRoutes from "./statics";
 
 const routes = new Elysia()
-  .get("/", async ({ html }: any) => {
-    return html(
-      <BaseHtml>
-        <PuppyLandingPage />
-      </BaseHtml>
-    );
-  })
+  .get("/", () => (
+    <BaseHtml>
+      <PuppyLandingPage />
+    </BaseHtml>
+  ))
   .use(puppiesRoutes)
   .use(staticRoutes);
 

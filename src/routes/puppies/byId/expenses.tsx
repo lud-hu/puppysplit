@@ -1,5 +1,6 @@
 import { Elysia, t } from "elysia";
 import BaseHtml from "../../../components/BaseHtml";
+import NotFoundPage from "../../../components/NotFoundPage";
 import ExpenseList from "../../../components/ExpenseList";
 import ExpenseListItem from "../../../components/ExpenseListItem";
 import PuppyHeader from "../../../components/PuppyHeader";
@@ -14,11 +15,12 @@ import { resolveParticipantIds } from "../../../util/resolveParticipants";
 const puppyExpensesRoutes = new Elysia()
   .get(
     "/puppies/:id/expenses",
-    async ({ params }) => {
+    async ({ params, set }) => {
       const puppy = await getPuppyWithExpenses(params.id);
 
       if (!puppy) {
-        return <div>Not found</div>;
+        set.status = 404;
+        return <NotFoundPage />;
       }
 
       const users = await getPuppyUsers(params.id);

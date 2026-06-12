@@ -1,15 +1,16 @@
 import { Elysia, t } from "elysia";
-import PuppySettingsHeader from "../../../components/PuppySettingsHeader";
+import PuppyHeader from "../../../components/PuppyHeader";
 import TitleEditForm from "../../../components/TitleEditForm";
 import { getPuppy, updatePuppyTitle } from "../../../db/queries";
 
-const puppiesByIndexTitleRoutes = new Elysia()
+const puppyTitleRoutes = new Elysia()
   .get(
     "/puppies/:id/titleEdit",
-    async ({ params }) => {
+    async ({ params, set }) => {
       const puppy = await getPuppy(params.id);
 
       if (!puppy) {
+        set.status = 404;
         return <div>Not found</div>;
       }
 
@@ -27,10 +28,11 @@ const puppiesByIndexTitleRoutes = new Elysia()
       await updatePuppyTitle(params.id, body.title);
 
       return (
-        <PuppySettingsHeader
+        <PuppyHeader
           title={body.title}
           backLink={`/puppies/${params.id}`}
           puppyId={params.id}
+          action="editTitle"
         />
       );
     },
@@ -45,18 +47,20 @@ const puppiesByIndexTitleRoutes = new Elysia()
   )
   .get(
     "/puppies/:id/title",
-    async ({ params }) => {
+    async ({ params, set }) => {
       const puppy = await getPuppy(params.id);
 
       if (!puppy) {
+        set.status = 404;
         return <div>Not found</div>;
       }
 
       return (
-        <PuppySettingsHeader
+        <PuppyHeader
           title={puppy.title}
           backLink={`/puppies/${puppy.id}`}
           puppyId={puppy.id}
+          action="editTitle"
         />
       );
     },
@@ -67,4 +71,4 @@ const puppiesByIndexTitleRoutes = new Elysia()
     }
   );
 
-export default puppiesByIndexTitleRoutes;
+export default puppyTitleRoutes;

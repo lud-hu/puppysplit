@@ -1,5 +1,6 @@
 import { Elysia, t } from "elysia";
 import BaseHtml from "../../../components/BaseHtml";
+import NotFoundPage from "../../../components/NotFoundPage";
 import PuppyDetails from "../../../components/PuppyDetails";
 import {
   deletePuppyCascade,
@@ -15,11 +16,12 @@ import puppyUsersRoutes from "./users";
 const puppyIndexRoutes = new Elysia()
   .get(
     "/puppies/:id",
-    async ({ params }) => {
+    async ({ params, set }) => {
       const puppy = await getPuppyWithExpenses(params.id);
 
       if (!puppy) {
-        return <div>Not found</div>;
+        set.status = 404;
+        return <NotFoundPage />;
       }
 
       const users = await getPuppyUsers(params.id);
