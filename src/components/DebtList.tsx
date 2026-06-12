@@ -14,7 +14,7 @@ export default function DebtList({
   users: User[];
   puppyId: string;
   title?: string;
-  additionalListItem?: string;
+  additionalListItem?: JSX.Element;
 }) {
   return (
     <section>

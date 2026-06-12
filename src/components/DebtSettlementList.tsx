@@ -46,12 +46,12 @@ export default function DebtSettlementList({
                 <input
                   type="hidden"
                   name="debtorId"
-                  value={d.creditorId.toString()}
+                  value={d.creditorId?.toString() ?? ""}
                 />
                 <input
                   type="hidden"
                   name="creditorIds"
-                  value={d.debtorId.toString()}
+                  value={d.debtorId?.toString() ?? ""}
                 />
                 <input
                   type="hidden"

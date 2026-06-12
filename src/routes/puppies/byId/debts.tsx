@@ -85,10 +85,15 @@ const puppiesByIndexDebtsRoutes = new Elysia()
   .post(
     "/puppies/:id/debts",
     async ({ body, params }) => {
+      const parsedAmount = parseFloat(body.amount);
+      if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+        throw new Error("Invalid amount");
+      }
+
       const newDebt = await db
         .insert(debts)
         .values({
-          amount: parseFloat(body.amount),
+          amount: parsedAmount,
           debtorId: parseInt(body.debtorId),
           puppyId: params.id,
           title: body.title,

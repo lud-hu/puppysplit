@@ -5,10 +5,10 @@ import routes from "./routes";
 const app = new Elysia()
   .use(html())
   .use(routes)
-  .listen(3000)
-  .onError((err) => {
-    console.trace(err);
-  });
+  .onError((ctx: any) => {
+    console.trace(ctx.error);
+  })
+  .listen({ port: 3000, hostname: "0.0.0.0" });
 
 console.log(
   `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`

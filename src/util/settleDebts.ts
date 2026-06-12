@@ -36,7 +36,9 @@ const roundTwoDecimals = (num: number) =>
  * @returns
  */
 export const unifyDebts = (debts: Debt[]): SingleDebt[] => {
-  return debts.flatMap((debt) =>
+  return debts
+    .filter((debt) => Number.isFinite(debt.amount) && debt.amount > 0)
+    .flatMap((debt) =>
     debt.creditors
       .filter((c) => c.name !== debt.debtor)
       .map((creditor) => ({
@@ -101,6 +103,7 @@ export function settleDebts(debts: SingleDebt[]): SingleDebt[] {
   const transactions: SingleDebt[] = [];
   for (let i = 0; i < debtors.length; i++) {
     while (balanceMap[debtors[i]] < 0) {
+      if (creditors.length === 0) break;
       const debtor = debtors[i];
       const creditor = creditors[0];
       const amount = Math.min(-balanceMap[debtor], balanceMap[creditor]);

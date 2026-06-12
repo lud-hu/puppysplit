@@ -45,7 +45,7 @@ export default function PuppyDetails({
               href={`/puppies/${puppyId}/settle`}
               class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded no-underline"
             >
-              Settle Now
+              Show Debts
             </a>
           </div>
         </section>

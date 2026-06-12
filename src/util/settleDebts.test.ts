@@ -46,6 +46,42 @@ test("multi-creditor debts are properly unified", () => {
   expect(unifiedDebts).toStrictEqual(singleDebts);
 });
 
+test("unifyDebts skips debts with non-finite or non-positive amounts", () => {
+  const debts: Debt[] = [
+    {
+      debtor: "A",
+      debtorId: 0,
+      creditors: [
+        { name: "A", id: 0 },
+        { name: "B", id: 1 },
+      ],
+      amount: NaN,
+    },
+    {
+      debtor: "A",
+      debtorId: 0,
+      creditors: [
+        { name: "A", id: 0 },
+        { name: "B", id: 1 },
+      ],
+      amount: 0,
+    },
+    {
+      debtor: "A",
+      debtorId: 0,
+      creditors: [
+        { name: "A", id: 0 },
+        { name: "B", id: 1 },
+      ],
+      amount: 10,
+    },
+  ];
+
+  expect(unifyDebts(debts)).toStrictEqual([
+    { debtor: "A", debtorId: 0, creditor: "B", creditorId: 1, amount: 5 },
+  ]);
+});
+
 test("example 0: proper rounding", () => {
   const debts: SingleDebt[] = [
     {
@@ -192,6 +228,73 @@ test("example 3: no debts open", () => {
   const transactions = settleDebts(debts);
 
   expect(transactions).toStrictEqual([]);
+});
+
+test("rounding drift does not produce a NaN settlement when creditors are exhausted", () => {
+  // Splitting these amounts across many creditors leaves each per-creditor
+  // share rounded to 2 decimals, so the accumulated debtor/creditor balances
+  // no longer cancel exactly. Previously the settlement loop would keep going
+  // after all creditors were settled, read an undefined creditor, and emit a
+  // transaction with a NaN amount ("<blank> sends NaN€ to E"). It must not.
+  const debts: Debt[] = [
+    {
+      debtor: "B",
+      debtorId: 1,
+      creditors: [
+        { name: "A", id: 0 },
+        { name: "B", id: 1 },
+        { name: "C", id: 2 },
+        { name: "D", id: 3 },
+        { name: "E", id: 4 },
+      ],
+      amount: 112.6,
+    },
+    {
+      debtor: "E",
+      debtorId: 4,
+      creditors: [
+        { name: "B", id: 1 },
+        { name: "C", id: 2 },
+        { name: "D", id: 3 },
+        { name: "F", id: 5 },
+      ],
+      amount: 62.9,
+    },
+    {
+      debtor: "B",
+      debtorId: 1,
+      creditors: [
+        { name: "D", id: 3 },
+        { name: "E", id: 4 },
+      ],
+      amount: 80.8,
+    },
+    {
+      debtor: "C",
+      debtorId: 2,
+      creditors: [
+        { name: "B", id: 1 },
+        { name: "F", id: 5 },
+      ],
+      amount: 53.2,
+    },
+  ];
+  const transactions = settleDebts(unifyDebts(debts));
+
+  for (const t of transactions) {
+    expect(Number.isFinite(t.amount)).toBe(true);
+    expect(t.creditor).toBeDefined();
+    expect(t.creditorId).toBeDefined();
+    expect(t.debtor).toBeDefined();
+    expect(t.debtorId).toBeDefined();
+  }
+
+  expect(transactions).toStrictEqual([
+    { debtor: "B", creditor: "D", amount: 78.65, debtorId: 1, creditorId: 3 },
+    { debtor: "B", creditor: "F", amount: 42.33, debtorId: 1, creditorId: 5 },
+    { debtor: "B", creditor: "A", amount: 7.57, debtorId: 1, creditorId: 0 },
+    { debtor: "C", creditor: "A", amount: 14.95, debtorId: 2, creditorId: 0 },
+  ]);
 });
 
 test("integrate debt unification in debt calculation", () => {

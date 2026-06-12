@@ -23,7 +23,7 @@ export default (
       name: string;
       puppyId: string;
     };
-  }[]
+  }[],
 ): MyDebt[] => {
   return (
     debts.map((debt) => ({
@@ -31,10 +31,12 @@ export default (
       creditorsToDebts: undefined,
       debtorId: debt.debtorId,
       debtor: debt.debtor.name,
-      creditors: debt.creditorsToDebts.map((c) => ({
-        name: c.user.name,
-        id: c.user.id,
-      })),
+      creditors: debt.creditorsToDebts
+        // .filter((c) => c.user?.id != null)
+        .map((c) => ({
+          name: c.user.name,
+          id: c.user.id,
+        })),
     })) || []
   );
 };

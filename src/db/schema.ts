@@ -1,4 +1,4 @@
-import { InferModel, relations, sql } from "drizzle-orm";
+import { InferSelectModel, relations, sql } from "drizzle-orm";
 import {
   integer,
   primaryKey,
@@ -68,7 +68,7 @@ export const creditorsToDebts = sqliteTable(
       .references(() => debts.id),
   },
   (t) => ({
-    pk: primaryKey(t.userId, t.debtId),
+    pk: primaryKey({ columns: [t.userId, t.debtId] }),
   })
 );
 
@@ -86,6 +86,6 @@ export const creditorsToDebtsRelations = relations(
   })
 );
 
-export type Puppy = InferModel<typeof puppies>;
-export type Debt = InferModel<typeof debts>;
-export type User = InferModel<typeof users>;
+export type Puppy = InferSelectModel<typeof puppies>;
+export type Debt = InferSelectModel<typeof debts>;
+export type User = InferSelectModel<typeof users>;

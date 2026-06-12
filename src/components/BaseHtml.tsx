@@ -1,6 +1,7 @@
 import * as elements from "typed-html";
 
-interface BaseHtmlProps extends elements.Children {
+interface BaseHtmlProps {
+  children?: JSX.Element | JSX.Element[];
   pageTitle?: string;
 }
 
