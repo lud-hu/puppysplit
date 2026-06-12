@@ -1,7 +1,6 @@
-import * as elements from "typed-html";
 import { User } from "../db/schema";
 import getPuppyIcon from "../util/getPuppyIcon";
-import EditIcons from "./icons/EditIcon";
+import EditIcon from "./icons/EditIcon";
 import LeftArrow from "./icons/LeftArrow";
 
 export default function PuppySettingsHeader({
@@ -25,7 +24,7 @@ export default function PuppySettingsHeader({
         <LeftArrow />
       </a>
       <div class="flex">
-        <h1 class="text-4xl mr-auto">
+        <h1 safe class="text-4xl mr-auto">
           {puppyId && getPuppyIcon(puppyId)}
           {title}
         </h1>
@@ -35,17 +34,14 @@ export default function PuppySettingsHeader({
           aria-label="Edit Title"
           class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold h-10 w-10 rounded inline-flex items-center justify-center"
         >
-          <EditIcons />
+          <EditIcon />
         </button>
       </div>
-      {users && (
+      {users ? (
         <small>
-          Members:{" "}
-          {users.map((u, i) => (
-            <span>{i < users.length - 1 ? `${u.name}, ` : u.name}</span>
-          ))}
+          Members: <span safe>{users.map((u) => u.name).join(", ")}</span>
         </small>
-      )}
+      ) : null}
     </header>
   );
 }

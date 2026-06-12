@@ -1,5 +1,4 @@
 import { Elysia, t } from "elysia";
-import * as elements from "typed-html";
 import BaseHtml from "../../../components/BaseHtml";
 import DebtSettlementList from "../../../components/DebtSettlementList";
 import PuppyHeader from "../../../components/PuppyHeader";

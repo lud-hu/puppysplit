@@ -1,4 +1,3 @@
-import * as elements from "typed-html";
 import { User } from "../db/schema";
 import Input from "./Input";
 
@@ -29,7 +28,9 @@ export default function AddDebtForm({
           hx-ext="debtorSelectionPersistor"
         >
           {users?.map((u) => (
-            <option value={u.id.toString()}>{u.name}</option>
+            <option value={u.id.toString()} safe>
+              {u.name}
+            </option>
           ))}
         </select>
         <Input id="amount" name="amount" label="paid" isAmountInput />
@@ -65,7 +66,9 @@ export default function AddDebtForm({
                     value={u.id.toString()}
                     id={"userCheckbox" + u.name}
                   />
-                  <label for={"userCheckbox" + u.name}>{u.name}</label>
+                  <label for={"userCheckbox" + u.name} safe>
+                    {u.name}
+                  </label>
                 </div>
               ))}
             </div>

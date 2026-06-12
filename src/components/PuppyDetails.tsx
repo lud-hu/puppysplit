@@ -1,4 +1,3 @@
-import * as elements from "typed-html";
 import { User } from "../db/schema";
 import { MyDebt } from "../types";
 import AddDebtForm from "./AddDebtForm";
@@ -21,21 +20,16 @@ export default function PuppyDetails({
       <PuppyHeader puppyId={puppyId} title={title} users={users} />
       <main class="flex flex-col gap-10">
         <AddDebtForm users={users} puppyId={puppyId} />
-        <DebtList
-          debts={debts.slice(0, 5)}
-          users={users}
-          puppyId={puppyId}
-          additionalListItem={
-            <li class="py-2 px-4 text-center">
-              <a
-                href={`/puppies/${puppyId}/debts`}
-                class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded no-underline"
-              >
-                Show All
-              </a>
-            </li>
-          }
-        />
+        <DebtList debts={debts.slice(0, 5)} users={users} puppyId={puppyId}>
+          <li class="py-2 px-4 text-center">
+            <a
+              href={`/puppies/${puppyId}/debts`}
+              class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded no-underline"
+            >
+              Show All
+            </a>
+          </li>
+        </DebtList>
         <section>
           <h2 class="text-2xl mb-3 pl-4 block uppercase tracking-wide text-gray-700 font-bold">
             Settle

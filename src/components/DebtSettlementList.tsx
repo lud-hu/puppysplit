@@ -1,4 +1,4 @@
-import * as elements from "typed-html";
+import { Html } from "@kitajs/html";
 import { SingleDebt } from "../util/settleDebts";
 import { User } from "../db/schema";
 
@@ -21,9 +21,9 @@ export default function DebtSettlementList({
           settleDebts?.map((d) => (
             <li class="flex items-center justify-between py-2 px-4 not-last:border-b-2 border-gray-300">
               <div>
-                {/* TOOD: Proper rounding */}
-                {d.creditor} sends {d.amount}€ to {d.debtor}
-                {users.find((u) => u.name === d.debtor)?.payPalHandle && (
+                {Html.escapeHtml(d.creditor)} sends {d.amount}€ to{" "}
+                {Html.escapeHtml(d.debtor)}
+                {users.find((u) => u.name === d.debtor)?.payPalHandle ? (
                   <div class="p-2">
                     <a
                       class="inline bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded no-underline"
@@ -34,7 +34,7 @@ export default function DebtSettlementList({
                       Send via Paypal
                     </a>
                   </div>
-                )}
+                ) : null}
               </div>
               <form
                 hx-confirm="Really mark settled?"

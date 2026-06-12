@@ -1,4 +1,4 @@
-import * as elements from "typed-html";
+import { Html } from "@kitajs/html";
 import { MyDebt } from "../types";
 import DeleteIcon from "./icons/DeleteIcon";
 
@@ -14,14 +14,17 @@ export default function DebtListEntry({
   return (
     <li class="py-2 px-4 not-last:border-b-2 border-gray-300 flex justify-between">
       <div>
-        {debt.debtor} paid {debt.amount}€ for <i>{debt.title}</i>
+        {Html.escapeHtml(debt.debtor)} paid {debt.amount}€ for{" "}
+        <i safe>{debt.title}</i>
         <br />
         <small>
           Members:{" "}
-          {debt.creditors.length === puppyUserCount
-            ? "All"
-            : debt.creditors.map((c) => c.name).join(", ")}
-          on {debt.date?.toLocaleDateString()}
+          {Html.escapeHtml(
+            debt.creditors.length === puppyUserCount
+              ? "All"
+              : debt.creditors.map((c) => c.name).join(", ")
+          )}{" "}
+          on {Html.escapeHtml(debt.date?.toLocaleDateString() ?? "")}
         </small>
       </div>
       <button

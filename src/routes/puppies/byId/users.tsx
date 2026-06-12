@@ -1,5 +1,4 @@
 import { Elysia, t } from "elysia";
-import * as elements from "typed-html";
 import UsersListItem from "../../../components/UsersListItem";
 import { createUser, deleteUser } from "../../../db/queries";
 

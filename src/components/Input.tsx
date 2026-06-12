@@ -1,4 +1,3 @@
-import * as elements from "typed-html";
 
 export default function Input({
   id,
@@ -34,14 +33,15 @@ export default function Input({
     // See /amountInput.js for the formatting logic.
     return (
       <div class="w-full" data-amount-wrapper="true">
-        {label && (
+        {label ? (
           <label
+            safe
             class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             for={id || ""}
           >
             {label}
           </label>
-        )}
+        ) : null}
         <span class="flex items-center w-full bg-gray-200 text-gray-700 border rounded px-4 leading-tight focus-within:bg-white">
           {/* invisible mirror of the € so the value stays optically centered */}
           <span class="pr-2 select-none invisible" aria-hidden="true">
@@ -71,17 +71,18 @@ export default function Input({
 
   return (
     <div class="w-full">
-      {label && (
+      {label ? (
         <label
+          safe
           class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
           for={id || ""}
         >
           {label}
         </label>
-      )}
+      ) : null}
       {prefix ? (
         <span class="block w-full bg-gray-200 text-gray-700 border rounded px-4 leading-tight focus:outline-hidden focus-within:bg-white">
-          {prefix}
+          <span safe>{prefix}</span>
           <input
             class="appearance-none bg-gray-200 py-3 leading-tight focus:outline-hidden focus:bg-white"
             {...additionalInputProps}

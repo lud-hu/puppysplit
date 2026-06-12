@@ -1,5 +1,4 @@
 import { Elysia } from "elysia";
-import * as elements from "typed-html";
 import BaseHtml from "../components/BaseHtml";
 import PuppyLandingPage from "../components/PuppyLandingPage";
 import { db } from "../db";

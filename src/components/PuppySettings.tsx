@@ -1,4 +1,3 @@
-import * as elements from "typed-html";
 import { User } from "../db/schema";
 import ManageUsersForm from "./ManageUsersForm";
 import PuppySettingsHeader from "./PuppySettingsHeader";

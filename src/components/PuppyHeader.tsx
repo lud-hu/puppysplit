@@ -1,4 +1,3 @@
-import * as elements from "typed-html";
 import { User } from "../db/schema";
 import getPuppyIcon from "../util/getPuppyIcon";
 import SettingsIcon from "./icons/SettingsIcon";
@@ -17,7 +16,7 @@ export default function PuppyHeader({
 }) {
   return (
     <header id="puppy-header" class="p-4 mt-8">
-      {backLink && (
+      {backLink ? (
         <a
           href={backLink}
           aria-label="Back"
@@ -25,13 +24,16 @@ export default function PuppyHeader({
         >
           <LeftArrow />
         </a>
-      )}
+      ) : null}
       <div class="flex">
-        <h1 class="text-4xl mr-auto block tracking-wide text-gray-700 font-bold">
+        <h1
+          safe
+          class="text-4xl mr-auto block tracking-wide text-gray-700 font-bold"
+        >
           {puppyId && getPuppyIcon(puppyId)}
           {title}
         </h1>
-        {puppyId && (
+        {puppyId ? (
           <a
             href={`/puppies/${puppyId}/settings`}
             aria-label="Settings"
@@ -39,16 +41,13 @@ export default function PuppyHeader({
           >
             <SettingsIcon />
           </a>
-        )}
+        ) : null}
       </div>
-      {users && (
+      {users ? (
         <small>
-          Members:{" "}
-          {users.map((u, i) => (
-            <span>{i < users.length - 1 ? `${u.name}, ` : u.name}</span>
-          ))}
+          Members: <span safe>{users.map((u) => u.name).join(", ")}</span>
         </small>
-      )}
+      ) : null}
     </header>
   );
 }

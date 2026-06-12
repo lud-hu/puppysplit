@@ -1,4 +1,3 @@
-import * as elements from "typed-html";
 import { User } from "../db/schema";
 import UsersListItem from "./UsersListItem";
 import Input from "./Input";

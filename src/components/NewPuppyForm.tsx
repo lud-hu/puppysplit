@@ -1,4 +1,3 @@
-import * as elements from "typed-html";
 import Input from "./Input";
 
 export default function NewPuppyForm() {

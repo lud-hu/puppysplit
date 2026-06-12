@@ -1,5 +1,4 @@
 import { Elysia, t } from "elysia";
-import * as elements from "typed-html";
 import PuppySettingsHeader from "../../../components/PuppySettingsHeader";
 import TitleEditForm from "../../../components/TitleEditForm";
 import { getPuppy, updatePuppyTitle } from "../../../db/queries";
