@@ -9,6 +9,7 @@ import {
   getPuppyUsers,
   getPuppyWithExpenses,
 } from "../../../db/queries";
+import { resolveParticipantIds } from "../../../util/resolveParticipants";
 
 const puppyExpensesRoutes = new Elysia()
   .get(
@@ -62,42 +63,16 @@ const puppyExpensesRoutes = new Elysia()
   .post(
     "/puppies/:id/expenses",
     async ({ body, params }) => {
-      const parsedAmount = parseFloat(body.amount);
-      if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
-        throw new Error("Invalid amount");
-      }
-
       const users = await getPuppyUsers(params.id);
-
-      const getParticipantIds = () => {
-        const participantIds = body.participantIds;
-        if (body.splitSetting === "betweenAll") {
-          // Split the expense between all users
-          return users.map((u) => u.id);
-        } else if (participantIds) {
-          if (Array.isArray(participantIds) && participantIds?.length > 0) {
-            // Split the expense between the selected users
-            return users
-              .filter((u) => participantIds.includes(u.id.toString()))
-              .map((u) => u.id);
-          } else {
-            // A single participant was selected
-            return users
-              .filter((u) => participantIds === u.id.toString())
-              .map((u) => u.id);
-          }
-        }
-
-        throw new Error(
-          'Either splitSetting="betweenAll" or participantIds must be set'
-        );
-      };
-
-      const participantIds = getParticipantIds();
+      const participantIds = resolveParticipantIds(
+        body.splitSetting,
+        body.participantIds,
+        users
+      );
 
       const newExpense = await createExpense({
-        amount: parsedAmount,
-        payerId: parseInt(body.payerId),
+        amount: body.amount,
+        payerId: body.payerId,
         puppyId: params.id,
         title: body.title,
         participantIds,
@@ -128,15 +103,15 @@ const puppyExpensesRoutes = new Elysia()
     {
       body: t.Object({
         title: t.String({ minLength: 2 }),
-        // TODO: How to accept number here directly?
-        amount: t.String(),
-        payerId: t.String(),
+        amount: t.Numeric({ exclusiveMinimum: 0 }),
+        payerId: t.Numeric(),
         participantIds: t.Optional(
           t.Union([t.Array(t.String(), { minLength: 1 }), t.String()])
         ),
-        splitSetting: t.String({
-          enum: ["betweenAll", "notBetweenAll"],
-        }),
+        splitSetting: t.Union([
+          t.Literal("betweenAll"),
+          t.Literal("notBetweenAll"),
+        ]),
       }),
       params: t.Object({
         id: t.String(),

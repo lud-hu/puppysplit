@@ -1,28 +1,8 @@
 import { desc, eq, inArray } from "drizzle-orm";
 import { db } from ".";
+import { toExpense } from "./mapExpense";
 import { expenseParticipants, expenses, puppies, users } from "./schema";
 import type { ExpenseRow, User } from "./schema";
-import type { Expense } from "../types";
-
-type ExpenseWithRelations = ExpenseRow & {
-  payer: User;
-  participants: { userId: number; expenseId: number; user: User }[];
-};
-
-export function toExpense(expense: ExpenseWithRelations): Expense {
-  return {
-    id: expense.id,
-    title: expense.title,
-    amount: expense.amount,
-    date: expense.date,
-    payerId: expense.payerId,
-    payer: expense.payer.name,
-    participants: expense.participants.map((p) => ({
-      name: p.user.name,
-      id: p.user.id,
-    })),
-  };
-}
 
 /**
  * Loads a puppy with all its expenses (newest first), flattened for rendering.
