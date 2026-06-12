@@ -24,7 +24,7 @@ export default function AddDebtForm({
         <script src="/debtorSelectionPersistor.js" />
         <select
           name="debtorId"
-          class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight text-center focus:outline-none focus:bg-white"
+          class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight text-center focus:outline-hidden focus:bg-white"
           style="text-align-last: center"
           hx-ext="debtorSelectionPersistor"
         >

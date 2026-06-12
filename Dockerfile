@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Adjust BUN_VERSION as desired
-ARG BUN_VERSION=0.6.14
+ARG BUN_VERSION=1.2.9
 FROM oven/bun:${BUN_VERSION} as base
 
 LABEL fly_launch_runtime="Bun"
@@ -22,10 +22,13 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY --link bun.lockb package.json ./
-RUN bun install --ci
+RUN bun install --frozen-lockfile
 
 # Copy application code
 COPY --link . .
+
+# Generate the Tailwind CSS bundle
+RUN bun run tw
 
 
 # Final stage for app image

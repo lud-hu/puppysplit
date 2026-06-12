@@ -32,6 +32,4 @@ Also: tailwind, drizzle, hyperscript and fly.io
 
 3. Run `fly secrets set DATABASE_URL=<your url>` & `fly secrets set DATABASE_AUTH_TOKEN=<your token>`
 
-4. Generate the tailwind css file with `bun run tw`
-
-5. Run `fly deploy`
+4. Run `fly deploy` (the Tailwind CSS bundle is generated during the Docker build)

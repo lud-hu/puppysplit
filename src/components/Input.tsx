@@ -54,7 +54,7 @@ export default function Input({
             inputmode="numeric"
             autocomplete="off"
             placeholder="0,00"
-            class="appearance-none bg-transparent w-full py-3 leading-tight text-center focus:outline-none"
+            class="appearance-none bg-transparent w-full py-3 leading-tight text-center focus:outline-hidden"
           />
           <span class="pl-2 select-none">€</span>
         </span>
@@ -80,16 +80,16 @@ export default function Input({
         </label>
       )}
       {prefix ? (
-        <span class="block w-full bg-gray-200 text-gray-700 border rounded px-4 leading-tight focus:outline-none focus-within:bg-white">
+        <span class="block w-full bg-gray-200 text-gray-700 border rounded px-4 leading-tight focus:outline-hidden focus-within:bg-white">
           {prefix}
           <input
-            class="appearance-none bg-gray-200 py-3 leading-tight focus:outline-none focus:bg-white"
+            class="appearance-none bg-gray-200 py-3 leading-tight focus:outline-hidden focus:bg-white"
             {...additionalInputProps}
           />
         </span>
       ) : (
         <input
-          class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight text-center focus:outline-none focus:bg-white"
+          class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight text-center focus:outline-hidden focus:bg-white"
           {...additionalInputProps}
         />
       )}
