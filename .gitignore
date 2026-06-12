@@ -172,3 +172,6 @@ dist
 
 *.db
 *.db-wal
+
+# macOS
+.DS_Store
