@@ -1,5 +1,5 @@
 import * as elements from "typed-html";
-import { MyDebt } from "./PuppyDetails";
+import { MyDebt } from "../types";
 import DeleteIcon from "./icons/DeleteIcon";
 
 export default function DebtListEntry({

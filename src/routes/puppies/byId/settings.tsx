@@ -2,30 +2,24 @@ import { Elysia, t } from "elysia";
 import * as elements from "typed-html";
 import BaseHtml from "../../../components/BaseHtml";
 import PuppySettings from "../../../components/PuppySettings";
-import { db } from "../../../db";
+import { getPuppy, getPuppyUsers } from "../../../db/queries";
 
 const puppiesByIndexSettingsRoutes = new Elysia().get(
   "/puppies/:id/settings",
-  async ({ params, set }) => {
-    const data = await db.query.puppies.findFirst({
-      where: (puppies, { eq }) => eq(puppies.id, params.id),
-    });
+  async ({ params }) => {
+    const puppy = await getPuppy(params.id);
 
-    if (!data) {
+    if (!puppy) {
       return <div>Not found</div>;
     }
 
-    const users = await db.query.users.findMany({
-      where: (users, { eq }) => eq(users.puppyId, params.id),
-    });
+    const users = await getPuppyUsers(params.id);
 
-    if (data) {
-      return (
-        <BaseHtml pageTitle={data.title + " - Einstellungen - Puppysplit"}>
-          <PuppySettings puppyId={data.id} title={data.title} users={users} />
-        </BaseHtml>
-      );
-    }
+    return (
+      <BaseHtml pageTitle={puppy.title + " - Einstellungen - Puppysplit"}>
+        <PuppySettings puppyId={puppy.id} title={puppy.title} users={users} />
+      </BaseHtml>
+    );
   },
   {
     params: t.Object({
@@ -34,5 +28,4 @@ const puppiesByIndexSettingsRoutes = new Elysia().get(
   }
 );
 
-// instead of exporting route handlers, we create new elysia instance with routes and export it
 export default puppiesByIndexSettingsRoutes;

@@ -1,78 +1,55 @@
-import { desc, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 import * as elements from "typed-html";
 import BaseHtml from "../../../components/BaseHtml";
 import DebtList from "../../../components/DebtList";
 import DebtListEntry from "../../../components/DebtListEntry";
 import PuppyHeader from "../../../components/PuppyHeader";
-import { db } from "../../../db";
-import { creditorsToDebts, debts } from "../../../db/schema";
-import transformDebts from "../../../util/transformDebts";
+import {
+  createDebt,
+  deleteDebt,
+  getPuppyUsers,
+  getPuppyWithDebts,
+} from "../../../db/queries";
 
 const puppiesByIndexDebtsRoutes = new Elysia()
   .get(
     "/puppies/:id/debts",
-    async ({ params, set }) => {
-      const data = await db.query.puppies.findFirst({
-        where: (puppies, { eq }) => eq(puppies.id, params.id),
-        with: {
-          debts: {
-            orderBy: (debts) => [desc(debts.date)],
-            with: {
-              debtor: true,
-              creditorsToDebts: {
-                with: {
-                  user: true,
-                },
-              },
-            },
-          },
-        },
-      });
+    async ({ params }) => {
+      const puppy = await getPuppyWithDebts(params.id);
 
-      if (!data) {
+      if (!puppy) {
         return <div>Not found</div>;
       }
 
-      const debts = transformDebts(data.debts);
+      const users = await getPuppyUsers(params.id);
 
-      const users = await db.query.users.findMany({
-        where: (users, { eq }) => eq(users.puppyId, params.id),
-      });
-
-      if (data) {
-        return (
-          <BaseHtml pageTitle={data.title + " - Puppysplit"}>
-            <PuppyHeader
-              puppyId={data.id}
-              title={data.title}
-              users={users}
-              backLink={`/puppies/${data.id}`}
-            />
-            <DebtList
-              debts={debts}
-              users={users}
-              puppyId={data.id}
-              title="All Expenses"
-            />
-          </BaseHtml>
-        );
-      }
+      return (
+        <BaseHtml pageTitle={puppy.title + " - Puppysplit"}>
+          <PuppyHeader
+            puppyId={puppy.id}
+            title={puppy.title}
+            users={users}
+            backLink={`/puppies/${puppy.id}`}
+          />
+          <DebtList
+            debts={puppy.debts}
+            users={users}
+            puppyId={puppy.id}
+            title="All Expenses"
+          />
+        </BaseHtml>
+      );
     },
     {
       params: t.Object({
         id: t.String(),
       }),
     }
-  ) // Add a debt to a puppy
+  )
   .delete(
     "/puppies/:id/debts/:debtId",
     async ({ params }) => {
-      await db
-        .delete(creditorsToDebts)
-        .where(eq(creditorsToDebts.debtId, params.debtId));
-      await db.delete(debts).where(eq(debts.id, params.debtId));
-
+      await deleteDebt(params.debtId);
       return null;
     },
     {
@@ -82,6 +59,7 @@ const puppiesByIndexDebtsRoutes = new Elysia()
       }),
     }
   )
+  // Add a debt to a puppy
   .post(
     "/puppies/:id/debts",
     async ({ body, params }) => {
@@ -90,21 +68,7 @@ const puppiesByIndexDebtsRoutes = new Elysia()
         throw new Error("Invalid amount");
       }
 
-      const newDebt = await db
-        .insert(debts)
-        .values({
-          amount: parsedAmount,
-          debtorId: parseInt(body.debtorId),
-          puppyId: params.id,
-          title: body.title,
-          date: new Date(),
-        })
-        .returning()
-        .get();
-
-      const users = await db.query.users.findMany({
-        where: (users, { eq }) => eq(users.puppyId, params.id),
-      });
+      const users = await getPuppyUsers(params.id);
 
       const getCreditorIds = () => {
         const creditorIds = body.creditorIds;
@@ -132,12 +96,13 @@ const puppiesByIndexDebtsRoutes = new Elysia()
 
       const creditorIds = getCreditorIds();
 
-      await db.insert(creditorsToDebts).values(
-        creditorIds.map((c) => ({
-          debtId: newDebt.id,
-          userId: c,
-        }))
-      );
+      const newDebt = await createDebt({
+        amount: parsedAmount,
+        debtorId: parseInt(body.debtorId),
+        puppyId: params.id,
+        title: body.title,
+        creditorIds,
+      });
 
       return (
         <DebtListEntry
@@ -155,7 +120,6 @@ const puppiesByIndexDebtsRoutes = new Elysia()
             amount: newDebt.amount,
             title: newDebt.title,
             date: newDebt.date,
-            creditorsToDebts: undefined,
             debtorId: newDebt.debtorId,
             id: newDebt.id,
           }}
@@ -178,18 +142,6 @@ const puppiesByIndexDebtsRoutes = new Elysia()
       params: t.Object({
         id: t.String(),
       }),
-      error({ code, error }) {
-        switch (code) {
-          case "VALIDATION":
-            console.log(error.all);
-
-            // Find a specific error name (path is OpenAPI Schema compliance)
-            const name = error.all.find((x) => x.path === "/name");
-
-            // If has validation error, then log it
-            if (name) console.log(name);
-        }
-      },
     }
   );
 

@@ -1,7 +1,7 @@
 import * as elements from "typed-html";
 import { User } from "../db/schema";
+import { MyDebt } from "../types";
 import DebtListEntry from "./DebtListEntry";
-import { MyDebt } from "./PuppyDetails";
 
 export default function DebtList({
   debts,

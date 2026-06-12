@@ -1,5 +1,6 @@
 import * as elements from "typed-html";
 import { User } from "../db/schema";
+import { MyDebt } from "../types";
 import AddDebtForm from "./AddDebtForm";
 import DebtList from "./DebtList";
 import PuppyHeader from "./PuppyHeader";
@@ -52,18 +53,4 @@ export default function PuppyDetails({
       </main>
     </div>
   );
-}
-
-export interface MyDebt {
-  creditorsToDebts: undefined;
-  debtorId: number;
-  debtor: string;
-  creditors: {
-    name: string;
-    id: number;
-  }[];
-  id: number;
-  title: string;
-  amount: number;
-  date?: Date;
 }
