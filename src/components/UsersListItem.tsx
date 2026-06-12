@@ -1,4 +1,3 @@
-import * as elements from "typed-html";
 import { User } from "../db/schema";
 import DeleteIcon from "./icons/DeleteIcon";
 
@@ -11,7 +10,7 @@ export default function UsersListItem({
 }) {
   return (
     <li class="py-4 px-4 not-last:border-b-2 border-gray-300 flex justify-between">
-      {user.name}{" "}
+      <span safe>{user.name}</span>{" "}
       <button
         // TODO: Use customized Confirm UI: https://htmx.org/examples/confirm/
         hx-confirm={`Delete ${user.name}?`}

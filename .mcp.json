@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "my-database": {
+      "type": "stdio",
+      "command": "tursodb",
+      "args": [
+        "./keen-maddog.db",
+        "--mcp"
+      ]
+    }
+  }
+}

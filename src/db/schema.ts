@@ -1,4 +1,4 @@
-import { InferModel, relations, sql } from "drizzle-orm";
+import { InferSelectModel, relations, sql } from "drizzle-orm";
 import {
   integer,
   primaryKey,
@@ -13,31 +13,34 @@ export const puppies = sqliteTable("puppies", {
   title: text("title").notNull(),
 });
 
-export const puppiesRelations = relations(puppies, ({ many, one }) => ({
+export const puppiesRelations = relations(puppies, ({ many }) => ({
   users: many(users),
-  debts: many(debts),
+  expenses: many(expenses),
 }));
 
-export const debts = sqliteTable("debts", {
+/**
+ * An expense paid by one user (the payer) and split between
+ * the participating users.
+ */
+export const expenses = sqliteTable("expenses", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   amount: real("amount").notNull(),
-  debtorId: integer("debtorId", { mode: "number" }).notNull(),
+  payerId: integer("payerId", { mode: "number" }).notNull(),
   puppyId: text("puppyId").notNull(),
   date: integer("date", { mode: "timestamp" })
     .notNull()
-    // TODO: Default not working? :(
     .default(sql`CURRENT_TIMESTAMP`),
 });
 
-export const debtsRelations = relations(debts, ({ many, one }) => ({
-  creditorsToDebts: many(creditorsToDebts),
-  debtor: one(users, {
-    fields: [debts.debtorId],
+export const expensesRelations = relations(expenses, ({ many, one }) => ({
+  participants: many(expenseParticipants),
+  payer: one(users, {
+    fields: [expenses.payerId],
     references: [users.id],
   }),
-  puppies: one(puppies, {
-    fields: [debts.puppyId],
+  puppy: one(puppies, {
+    fields: [expenses.puppyId],
     references: [puppies.id],
   }),
 }));
@@ -50,42 +53,46 @@ export const users = sqliteTable("users", {
 });
 
 export const usersRelations = relations(users, ({ many, one }) => ({
-  creditorsToDebts: many(creditorsToDebts),
-  puppies: one(puppies, {
+  expenseParticipations: many(expenseParticipants),
+  puppy: one(puppies, {
     fields: [users.puppyId],
     references: [puppies.id],
   }),
 }));
 
-export const creditorsToDebts = sqliteTable(
-  "creditors_to_debts",
+/**
+ * The users an expense is split between (each owes their share
+ * to the payer).
+ */
+export const expenseParticipants = sqliteTable(
+  "expense_participants",
   {
     userId: integer("user_id")
       .notNull()
       .references(() => users.id),
-    debtId: integer("debt_id")
+    expenseId: integer("expense_id")
       .notNull()
-      .references(() => debts.id),
+      .references(() => expenses.id),
   },
   (t) => ({
-    pk: primaryKey(t.userId, t.debtId),
+    pk: primaryKey({ columns: [t.userId, t.expenseId] }),
   })
 );
 
-export const creditorsToDebtsRelations = relations(
-  creditorsToDebts,
+export const expenseParticipantsRelations = relations(
+  expenseParticipants,
   ({ one }) => ({
-    debt: one(debts, {
-      fields: [creditorsToDebts.debtId],
-      references: [debts.id],
+    expense: one(expenses, {
+      fields: [expenseParticipants.expenseId],
+      references: [expenses.id],
     }),
     user: one(users, {
-      fields: [creditorsToDebts.userId],
+      fields: [expenseParticipants.userId],
       references: [users.id],
     }),
   })
 );
 
-export type Puppy = InferModel<typeof puppies>;
-export type Debt = InferModel<typeof debts>;
-export type User = InferModel<typeof users>;
+export type Puppy = InferSelectModel<typeof puppies>;
+export type ExpenseRow = InferSelectModel<typeof expenses>;
+export type User = InferSelectModel<typeof users>;

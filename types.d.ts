@@ -1,5 +1,1 @@
-declare namespace JSX {
-  interface HtmlTag {
-    _?: string;
-  }
-}
+/// <reference types="@kitajs/html/htmx.d.ts" />

@@ -1,8 +1,8 @@
-import * as elements from "typed-html";
 import { User } from "../db/schema";
 import Input from "./Input";
+import { Button, SectionHeading } from "./ui";
 
-export default function AddDebtForm({
+export default function AddExpenseForm({
   users,
   puppyId,
 }: {
@@ -11,34 +11,28 @@ export default function AddDebtForm({
 }) {
   return (
     <section>
-      <h2 class="text-2xl mb-3 pl-4 block uppercase tracking-wide text-gray-700 font-bold">
-        Add expense
-      </h2>
+      <SectionHeading>Add expense</SectionHeading>
       <form
-        hx-post={`/puppies/${puppyId}/debts`}
-        hx-target="#debt-list"
+        hx-post={`/puppies/${puppyId}/expenses`}
+        hx-target="#expense-list"
         hx-swap="afterbegin"
-        hx-on={`htmx:afterRequest: this.reset(); restoreUser('${puppyId}', this.debtorId); this.amount.focus();`}
+        hx-on={`htmx:afterRequest: this.reset(); restoreUser('${puppyId}', this.payerId); this.querySelector('#amount').focus();`}
         class="flex flex-col bg-gray-100 p-4 gap-4 text-center"
       >
-        <script src="/debtorSelectionPersistor.js" />
+        <script src="/payerSelectionPersistor.js" />
         <select
-          name="debtorId"
-          class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-          hx-ext="debtorSelectionPersistor"
+          name="payerId"
+          class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight text-center focus:outline-hidden focus:bg-white"
+          style="text-align-last: center"
+          hx-ext="payerSelectionPersistor"
         >
           {users?.map((u) => (
-            <option value={u.id.toString()}>{u.name}</option>
+            <option value={u.id.toString()} safe>
+              {u.name}
+            </option>
           ))}
         </select>
-        <Input
-          id="amount"
-          name="amount"
-          type="number"
-          label="paid"
-          placeholder="12 €"
-          isAmountInput
-        />
+        <Input id="amount" name="amount" label="paid" isAmountInput />
         <Input id="title" name="title" label="for" placeholder="Dinge" />
         <fieldset>
           <legend class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
@@ -67,22 +61,19 @@ export default function AddDebtForm({
                 <div>
                   <input
                     type="checkbox"
-                    name="creditorIds"
+                    name="participantIds"
                     value={u.id.toString()}
-                    id={"userCheckbox" + u.name}
+                    id={"userCheckbox" + u.id}
                   />
-                  <label for={"userCheckbox" + u.name}>{u.name}</label>
+                  <label for={"userCheckbox" + u.id} safe>
+                    {u.name}
+                  </label>
                 </div>
               ))}
             </div>
           </div>
         </fieldset>
-        <button
-          type="submit"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Add
-        </button>
+        <Button type="submit">Add</Button>
       </form>
     </section>
   );

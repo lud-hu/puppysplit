@@ -1,5 +1,5 @@
-// This extension will save and restore the user selection to/from local storage
-htmx.defineExtension("debtorSelectionPersistor", {
+// This extension will save and restore the payer selection to/from local storage
+htmx.defineExtension("payerSelectionPersistor", {
   onEvent: function (name, evt) {
     if (name === "htmx:afterProcessNode") {
       const puppyId = window.location.href.split("/puppies/")[1].split("/")[0];

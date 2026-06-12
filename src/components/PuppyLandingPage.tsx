@@ -1,4 +1,3 @@
-import * as elements from "typed-html";
 import NewPuppyForm from "./NewPuppyForm";
 
 export default function PuppyLandingPage() {

@@ -1,26 +1,20 @@
-import { eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
-import * as elements from "typed-html";
-import PuppySettingsHeader from "../../../components/PuppySettingsHeader";
+import PuppyHeader from "../../../components/PuppyHeader";
 import TitleEditForm from "../../../components/TitleEditForm";
-import { db } from "../../../db";
-import { puppies } from "../../../db/schema";
+import { getPuppy, updatePuppyTitle } from "../../../db/queries";
 
-const puppiesByIndexTitleRoutes = new Elysia()
+const puppyTitleRoutes = new Elysia()
   .get(
     "/puppies/:id/titleEdit",
     async ({ params, set }) => {
-      const data = await db.query.puppies.findFirst({
-        where: (puppies, { eq }) => eq(puppies.id, params.id),
-      });
+      const puppy = await getPuppy(params.id);
 
-      if (!data) {
+      if (!puppy) {
+        set.status = 404;
         return <div>Not found</div>;
       }
 
-      if (data) {
-        return <TitleEditForm puppyId={params.id} title={data.title} />;
-      }
+      return <TitleEditForm puppyId={params.id} title={puppy.title} />;
     },
     {
       params: t.Object({
@@ -30,17 +24,15 @@ const puppiesByIndexTitleRoutes = new Elysia()
   )
   .put(
     "/puppies/:id/title",
-    async ({ body, set, params }) => {
-      await db
-        .update(puppies)
-        .set({ title: body.title })
-        .where(eq(puppies.id, params.id));
+    async ({ body, params }) => {
+      await updatePuppyTitle(params.id, body.title);
 
       return (
-        <PuppySettingsHeader
+        <PuppyHeader
           title={body.title}
           backLink={`/puppies/${params.id}`}
           puppyId={params.id}
+          action="editTitle"
         />
       );
     },
@@ -55,20 +47,20 @@ const puppiesByIndexTitleRoutes = new Elysia()
   )
   .get(
     "/puppies/:id/title",
-    async ({ body, set, params }) => {
-      const data = await db.query.puppies.findFirst({
-        where: (puppies, { eq }) => eq(puppies.id, params.id),
-      });
+    async ({ params, set }) => {
+      const puppy = await getPuppy(params.id);
 
-      if (!data) {
+      if (!puppy) {
+        set.status = 404;
         return <div>Not found</div>;
       }
 
       return (
-        <PuppySettingsHeader
-          title={data.title}
-          backLink={`/puppies/${data.id}`}
-          puppyId={data.id}
+        <PuppyHeader
+          title={puppy.title}
+          backLink={`/puppies/${puppy.id}`}
+          puppyId={puppy.id}
+          action="editTitle"
         />
       );
     },
@@ -79,4 +71,4 @@ const puppiesByIndexTitleRoutes = new Elysia()
     }
   );
 
-export default puppiesByIndexTitleRoutes;
+export default puppyTitleRoutes;

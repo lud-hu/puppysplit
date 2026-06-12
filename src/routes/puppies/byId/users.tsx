@@ -1,24 +1,17 @@
-import { eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
-import * as elements from "typed-html";
 import UsersListItem from "../../../components/UsersListItem";
-import { db } from "../../../db";
-import { creditorsToDebts, users } from "../../../db/schema";
+import { createUser, deleteUser } from "../../../db/queries";
 
 const puppiesByIndexUsersRoutes = new Elysia()
   // Add a user to a puppy
   .post(
     "/puppies/:id/users",
     async ({ body, params }) => {
-      const user = await db
-        .insert(users)
-        .values({
-          name: body.name,
-          puppyId: params.id,
-          payPalHandle: body.payPalHandle,
-        })
-        .returning()
-        .get();
+      const user = await createUser({
+        name: body.name,
+        puppyId: params.id,
+        payPalHandle: body.payPalHandle,
+      });
       return <UsersListItem puppyId={params.id} user={user} />;
     },
     {
@@ -35,13 +28,7 @@ const puppiesByIndexUsersRoutes = new Elysia()
   .delete(
     "/puppies/:id/users/:userId",
     async ({ params }) => {
-      // First delete all debts for this user
-      // The debt will still be there but it won't affrect this user anymore!
-      await db
-        .delete(creditorsToDebts)
-        .where(eq(creditorsToDebts.userId, params.userId));
-      // Then delete the user
-      await db.delete(users).where(eq(users.id, params.userId));
+      await deleteUser(params.userId);
       return null;
     },
     {

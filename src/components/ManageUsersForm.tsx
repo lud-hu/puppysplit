@@ -1,7 +1,7 @@
-import * as elements from "typed-html";
 import { User } from "../db/schema";
-import UsersListItem from "./UsersListItem";
 import Input from "./Input";
+import UsersListItem from "./UsersListItem";
+import { Button, SectionHeading } from "./ui";
 
 export default function ManageUsersForm({
   puppyId,
@@ -17,9 +17,7 @@ export default function ManageUsersForm({
           <UsersListItem puppyId={puppyId} user={u} />
         ))}
       </ul>
-      <h2 class="pl-4 text-2xl mt-10 mb-3 block uppercase tracking-wide text-gray-700 font-bold">
-        Add Member
-      </h2>
+      <SectionHeading class="mt-10">Add Member</SectionHeading>
       <form
         hx-post={`/puppies/${puppyId}/users`}
         hx-target="#users-list"
@@ -34,12 +32,7 @@ export default function ManageUsersForm({
           name="payPalHandle"
           prefix="paypal.me/"
         />
-        <button
-          type="submit"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Add
-        </button>
+        <Button type="submit">Add</Button>
       </form>
     </section>
   );
