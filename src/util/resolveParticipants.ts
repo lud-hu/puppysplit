@@ -14,6 +14,9 @@ export function resolveParticipantIds(
   users: User[]
 ): number[] {
   if (splitSetting === "betweenAll") {
+    if (users.length === 0) {
+      throw new Error("No members to split the expense between");
+    }
     return users.map((u) => u.id);
   }
 
@@ -26,6 +29,12 @@ export function resolveParticipantIds(
   const selected = Array.isArray(participantIds)
     ? participantIds
     : [participantIds];
+  if (
+    new Set(selected).size !== selected.length ||
+    selected.some((id) => !users.some((user) => user.id.toString() === id))
+  ) {
+    throw new Error("Select unique participants belonging to this puppy");
+  }
   const resolved = users
     .filter((u) => selected.includes(u.id.toString()))
     .map((u) => u.id);

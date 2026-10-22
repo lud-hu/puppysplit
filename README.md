@@ -71,8 +71,10 @@ https://puppysplit.fly.dev/mcp?puppyId=<puppy-id>&userId=<user-id>
 
 For local development use `http://localhost:3000` as the base URL. The puppy ID is
 in its existing share link (`/puppies/<puppy-id>`). `userId` is the positive numeric
-ID of an existing member (the value of their option in the web form's payer
-selector). Each connection fixes these two IDs; they are not tool arguments. A
+ID of an existing member. At the bottom of the puppy page, **Connect with MCP**
+lets you choose the payer and copy the configured MCP link or full JSON config.
+The generated URL uses the site's current origin, including for local development.
+Each connection fixes these two IDs; they are not tool arguments. A
 client that supports a `url` entry in `mcpServers` can use, for example:
 
 ```json
@@ -109,6 +111,11 @@ split only among those members. Use `get_puppy` to see their IDs. Empty lists,
 duplicate IDs, members of other puppies, nonpositive amounts, and attempts to
 supply a different puppy or payer are rejected. The configured puppy and payer
 membership are checked on every tool call.
+
+In the web form, choose **Specific people** under **split between** and check one
+or more members to share an expense. Only those members owe a share; the payer
+does not need to be a participant. **All members** remains the default. An empty
+selection is rejected, and a failed request keeps the entered expense for retrying.
 
 The MCP server exposes no tools to create puppies, delete puppies or expenses,
 manage users, rename puppies, or edit expenses. Repeating `add_expense` records
