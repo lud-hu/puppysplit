@@ -26,10 +26,36 @@ Also: tailwind, drizzle, hyperscript and fly.io
 
 # TO DEPLOY TO FLY
 
-1. Install the [Fly CLI](https://fly.io/docs/hands-on/install-flyctl/)
+The web app deploys to the existing Fly app `puppysplit`, configured in `fly.toml`.
 
-2. Run `fly launch`
+## GitHub Actions
 
-3. Run `fly secrets set DATABASE_URL=<your url>` & `fly secrets set DATABASE_AUTH_TOKEN=<your token>`
+The [Deploy web app workflow](.github/workflows/deploy.yml) runs on pushes to `main`, including merged PRs. You can also run it from the Actions tab with **Run workflow**, selecting `main`; other branches are skipped. Deployments run one at a time and build the existing Dockerfile remotely on Fly, including the Tailwind CSS bundle.
 
-4. Run `fly deploy` (the Tailwind CSS bundle is generated during the Docker build)
+In this repository's **Settings → Secrets and variables → Actions → New repository secret**, add:
+
+| Secret name | Value |
+| --- | --- |
+| `FLY_API_TOKEN` | An app-scoped deploy token generated with `fly tokens create deploy --app puppysplit` from an authenticated Fly CLI. |
+
+No GitHub Actions variables or database secrets are required. Set the token before merging this workflow; replace the secret when the token expires or is rotated.
+
+## Runtime database credentials
+
+`DATABASE_URL` and `DATABASE_AUTH_TOKEN` belong in the Fly app's runtime secrets, not GitHub Actions. If they are already configured, leave them as they are. For a first-time setup, configure them manually:
+
+```sh
+fly secrets set DATABASE_URL='<your url>' DATABASE_AUTH_TOKEN='<your token>' --app puppysplit
+```
+
+Automated deployments do not set or overwrite these secrets. They do not run migrations, schema pushes, seeds, or resets. The deploy command explicitly uses `--skip-release-command`, so Fly release commands are skipped even if one is added to `fly.toml` later. The Dockerfile builds CSS and starts the web server without running database tools.
+
+Schema changes remain a separate manual operation: back up the production database and run `bun run db:migrate` from a trusted local checkout with the intended database credentials before deploying code that requires the new schema. Keep database commands out of build, install, and server startup hooks.
+
+## Manual web app deployment
+
+With the [Fly CLI](https://fly.io/docs/hands-on/install-flyctl/) installed and authenticated, run:
+
+```sh
+fly deploy --app puppysplit --config fly.toml --remote-only --skip-release-command
+```
