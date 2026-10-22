@@ -1,0 +1,41 @@
+name: Deploy web app
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Let an active deployment finish before starting another one.
+concurrency:
+  group: fly-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Fly.io
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Fly CLI
+        uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # master
+
+      - name: Deploy web app only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          if [[ -z "$FLY_API_TOKEN" ]]; then
+            echo "::error::Set the FLY_API_TOKEN repository secret to a Fly deploy token for puppysplit."
+            exit 1
+          fi
+          # Database migrations and other release commands must stay manual.
+          flyctl deploy --app puppysplit --config fly.toml --remote-only --skip-release-command
