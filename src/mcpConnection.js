@@ -2,7 +2,6 @@
   const section = document.getElementById("mcp-connection");
   const payer = section.querySelector("#mcp-payer");
   const urlInput = section.querySelector("#mcp-url");
-  const configInput = section.querySelector("#mcp-config");
   const status = section.querySelector("[data-mcp-status]");
   const formPayer = document.querySelector('[name="payerId"]');
   let initialPayer = formPayer?.value;
@@ -20,18 +19,17 @@
     url.searchParams.set("puppyId", section.dataset.puppyId);
     url.searchParams.set("userId", payer.value);
     urlInput.value = url.href;
-    configInput.value = JSON.stringify({ mcpServers: { puppysplit: { url: url.href } } }, null, 2);
     status.textContent = "";
   }
 
   payer.addEventListener("change", update);
   section.querySelectorAll("[data-mcp-copy]").forEach((button) => {
     button.addEventListener("click", async () => {
-      const field = button.dataset.mcpCopy === "url" ? urlInput : configInput;
+      const field = urlInput;
       const value = field.value;
       try {
         await navigator.clipboard.writeText(value);
-        status.textContent = field === urlInput ? "MCP link copied." : "MCP config copied.";
+        status.textContent = "MCP link copied.";
       } catch {
         field.focus();
         field.select();
