@@ -64,13 +64,23 @@ const puppyExpensesRoutes = new Elysia()
   // Add an expense to a puppy
   .post(
     "/puppies/:id/expenses",
-    async ({ body, params }) => {
+    async ({ body, params, set }) => {
       const users = await getPuppyUsers(params.id);
-      const participantIds = resolveParticipantIds(
-        body.splitSetting,
-        body.participantIds,
-        users
-      );
+      if (!users.some((user) => user.id === body.payerId)) {
+        set.status = 422;
+        return "Select a payer belonging to this puppy.";
+      }
+      let participantIds: number[];
+      try {
+        participantIds = resolveParticipantIds(
+          body.splitSetting,
+          body.participantIds,
+          users
+        );
+      } catch {
+        set.status = 422;
+        return "Select at least one participant belonging to this puppy.";
+      }
 
       const newExpense = await createExpense({
         amount: body.amount,

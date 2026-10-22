@@ -1,8 +1,11 @@
 import { html } from "@elysiajs/html";
 import { Elysia } from "elysia";
 import routes from "./routes";
+import * as queries from "./db/queries";
+import { createMcpRoutes } from "./mcp/http";
 
 const app = new Elysia()
+  .use(createMcpRoutes(queries))
   .use(html())
   .use(routes)
   .onError(({ code, error, set }) => {
@@ -17,5 +20,5 @@ const app = new Elysia()
   .listen({ port: 3000, hostname: "0.0.0.0" });
 
 console.log(
-  `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
+  `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`,
 );

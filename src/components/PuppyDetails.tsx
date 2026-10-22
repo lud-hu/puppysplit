@@ -3,6 +3,7 @@ import { Expense } from "../types";
 import AddExpenseForm from "./AddExpenseForm";
 import ExpenseList from "./ExpenseList";
 import PuppyHeader from "./PuppyHeader";
+import McpConnection from "./McpConnection";
 import { LinkButton, SectionHeading } from "./ui";
 
 export default function PuppyDetails({
@@ -41,6 +42,7 @@ export default function PuppyDetails({
             </LinkButton>
           </div>
         </section>
+        <McpConnection puppyId={puppyId} users={users} />
       </main>
     </div>
   );

@@ -30,10 +30,10 @@ test("a single id string selects that user", () => {
   expect(resolveParticipantIds("notBetweenAll", "2", users)).toStrictEqual([2]);
 });
 
-test("ids not belonging to the puppy are ignored", () => {
-  expect(
+test("rejects any ids not belonging to the puppy", () => {
+  expect(() =>
     resolveParticipantIds("notBetweenAll", ["2", "999"], users)
-  ).toStrictEqual([2]);
+  ).toThrow();
 });
 
 test("missing participantIds throws", () => {
@@ -43,7 +43,11 @@ test("missing participantIds throws", () => {
 });
 
 test("only unknown ids throws", () => {
-  expect(() => resolveParticipantIds("notBetweenAll", ["999"], users)).toThrow(
-    "No valid participants selected"
-  );
+  expect(() => resolveParticipantIds("notBetweenAll", ["999"], users)).toThrow();
+});
+
+test("rejects empty lists, duplicate members and empty puppies", () => {
+  expect(() => resolveParticipantIds("notBetweenAll", [], users)).toThrow();
+  expect(() => resolveParticipantIds("notBetweenAll", ["2", "2"], users)).toThrow();
+  expect(() => resolveParticipantIds("betweenAll", undefined, [])).toThrow();
 });
