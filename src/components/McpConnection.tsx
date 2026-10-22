@@ -9,7 +9,10 @@ export default function McpConnection({
   users: User[];
 }) {
   return (
-    <section id="mcp-connection" data-puppy-id={puppyId}>
+    <details id="mcp-connection" data-puppy-id={puppyId}>
+      <summary class="cursor-pointer text-xl p-4 font-bold text-gray-700">
+        Advanced
+      </summary>
       <SectionHeading>Connect with MCP</SectionHeading>
       {users.length === 0 ? (
         <p class="p-4 bg-gray-100">
@@ -28,11 +31,6 @@ export default function McpConnection({
           <Button type="button" data-mcp-copy="url">
             Copy MCP link
           </Button>
-          <label for="mcp-config">MCP client configuration</label>
-          <textarea id="mcp-config" readonly rows="8" class="bg-white border rounded p-3 w-full text-sm" />
-          <Button type="button" data-mcp-copy="config">
-            Copy MCP config
-          </Button>
           <p data-mcp-status role="status" aria-live="polite"></p>
           <p class="text-sm">
             Keep this link private. Anyone with it can access this puppy and add
@@ -41,6 +39,6 @@ export default function McpConnection({
           <script src="/mcpConnection.js" defer />
         </div>
       )}
-    </section>
+    </details>
   );
 }

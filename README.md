@@ -71,8 +71,9 @@ https://puppysplit.fly.dev/mcp?puppyId=<puppy-id>&userId=<user-id>
 
 For local development use `http://localhost:3000` as the base URL. The puppy ID is
 in its existing share link (`/puppies/<puppy-id>`). `userId` is the positive numeric
-ID of an existing member. At the bottom of the puppy page, **Connect with MCP**
-lets you choose the payer and copy the configured MCP link or full JSON config.
+ID of an existing member. At the bottom of the puppy page, expand **Advanced**
+(collapsed by default). **Connect with MCP** lets you choose the payer and copy
+the configured MCP link.
 The generated URL uses the site's current origin, including for local development.
 Each connection fixes these two IDs; they are not tool arguments. A
 client that supports a `url` entry in `mcpServers` can use, for example:
