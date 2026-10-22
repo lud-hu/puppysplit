@@ -112,9 +112,9 @@ duplicate IDs, members of other puppies, nonpositive amounts, and attempts to
 supply a different puppy or payer are rejected. The configured puppy and payer
 membership are checked on every tool call.
 
-In the web form, choose **Specific people** under **split between** and check one
+In the web form, choose **the following members:** under **split between** and check one
 or more members to share an expense. Only those members owe a share; the payer
-does not need to be a participant. **All members** remains the default. An empty
+does not need to be a participant. **all members** remains the default. An empty
 selection is rejected, and a failed request keeps the entered expense for retrying.
 
 The MCP server exposes no tools to create puppies, delete puppies or expenses,

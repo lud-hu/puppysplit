@@ -46,7 +46,7 @@ export default function AddExpenseForm({
               value="betweenAll"
               checked
             />
-            <label for="betweenAll">All members</label>
+            <label for="betweenAll">all members</label>
           </div>
           <div class="text-left">
             <input
@@ -55,7 +55,7 @@ export default function AddExpenseForm({
               name="splitSetting"
               value="notBetweenAll"
             />
-            <label for="notBetweenAll">Specific people</label>
+            <label for="notBetweenAll">the following members:</label>
             <fieldset id="usersCheckboxList" class="pl-4" disabled>
               <legend class="text-sm py-2">
                 Choose who shares this expense (one or more).
