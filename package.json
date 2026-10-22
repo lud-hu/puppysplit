@@ -30,8 +30,10 @@
     "@elysiajs/html": "^1.4.2",
     "@kitajs/html": "^4.2.13",
     "@libsql/client": "^0.17.3",
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "@sinclair/typebox": "^0.34.49",
     "drizzle-orm": "^0.45.2",
-    "elysia": "^1.4.28"
+    "elysia": "^1.4.28",
+    "zod": "^3.25.0"
   }
 }
