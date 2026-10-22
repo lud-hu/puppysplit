@@ -16,11 +16,8 @@ ENV NODE_ENV=production
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-  apt-get install -y python-is-python3 pkg-config build-essential 
-
-# Install node modules
+# Install locked dependencies, which include prebuilt native modules.
+# No system compiler toolchain is required.
 COPY --link bun.lockb package.json ./
 RUN bun install --frozen-lockfile
 

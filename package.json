@@ -9,8 +9,8 @@
     "db:clear": "bun run ./src/db/tools/clearDb.ts",
     "db:seed": "bun run ./src/db/tools/seedDb.ts",
     "dev": "concurrently \"bun run --watch src/index.tsx --host\" \"bun run tw:dev\"",
-    "tw": "bunx @tailwindcss/cli -i ./src/styles.css -o ./tailwind-gen/styles.css",
-    "tw:dev": "bunx @tailwindcss/cli -i ./src/styles.css -o ./tailwind-gen/styles.css --watch",
+    "tw": "bun run --bun tailwindcss -i ./src/styles.css -o ./tailwind-gen/styles.css",
+    "tw:dev": "bun run --bun tailwindcss -i ./src/styles.css -o ./tailwind-gen/styles.css --watch",
     "test": "bun test",
     "typecheck": "tsc --noEmit && xss-scan"
   },
